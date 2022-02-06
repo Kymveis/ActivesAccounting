@@ -9,6 +9,7 @@ namespace ActivesAccounting.Core.Instantiating.Contracts
         ISession CreateSession(
             IEnumerable<IRecord> aRecords,
             IEnumerable<ICurrencyPrice> aPrices,
-            IEnumerable<ICurrency> aCurrencies);
+            IEnumerable<ICurrency> aCurrencies,
+            IEnumerable<IPlatform> aPlatforms);
     }
 }

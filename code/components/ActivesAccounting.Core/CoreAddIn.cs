@@ -13,6 +13,7 @@ namespace ActivesAccounting.Core
         {
             aBuilder.RegisterType<ValueFactory>().As<IValueFactory>().SingleInstance();
             aBuilder.RegisterType<CurrenciesContainer>().As<ICurrenciesContainer>().SingleInstance();
+            aBuilder.RegisterType<PlatformsContainer>().As<IPlatformsContainer>().SingleInstance();
             aBuilder.RegisterType<PricesContainer>().As<IPricesContainer>().SingleInstance();
             aBuilder.RegisterType<RecordsContainer>().As<IRecordsContainer>().SingleInstance();
             aBuilder.RegisterType<SessionFactory>().As<ISessionFactory>().SingleInstance();

@@ -20,6 +20,7 @@ namespace ActivesAccounting.Core.Serialization.Implementation
             IValueFactory aValueFactory,
             IPricesContainer aPricesContainer,
             ICurrenciesContainer aCurrenciesContainer,
+            IPlatformsContainer aPlatformsContainer,
             IRecordsContainer aRecordsContainer) =>
             _options = new JsonSerializerOptions
             {
@@ -30,9 +31,9 @@ namespace ActivesAccounting.Core.Serialization.Implementation
                     new CurrencyConverter(aCurrenciesContainer),
                     new CurrencyPriceConverter(aCurrenciesContainer, aPricesContainer),
                     new RecordConverter(aRecordsContainer),
-                    new ValueConverter<IValue>(aCurrenciesContainer, aValueFactory),
-                    new ValueConverter<ISimpleValue>(aCurrenciesContainer, aValueFactory),
-                    new ValueConverter<ICombinedValue>(aCurrenciesContainer, aValueFactory)
+                    new PlatformConverter(aPlatformsContainer),
+                    new ValueConverter<IValue>(aCurrenciesContainer, aPlatformsContainer, aValueFactory),
+                    new ValueConverter<ISimpleValue>(aCurrenciesContainer, aPlatformsContainer, aValueFactory),
                 }
             };
 

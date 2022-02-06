@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using ActivesAccounting.Core.Model.Contracts;
+using ActivesAccounting.Core.Model.Enums;
 
 namespace ActivesAccounting.Core.Instantiating.Contracts
 {
@@ -9,9 +10,9 @@ namespace ActivesAccounting.Core.Instantiating.Contracts
     {
         IEnumerable<ICurrency> Currencies { get; }
 
-        ICurrency CreateCurrency(string aName);
+        ICurrency CreateCurrency(string aName, CurrencyType aType);
 
-        internal ICurrency CreateCurrency(string aName, Guid aGuid);
+        internal ICurrency CreateCurrency(string aName, CurrencyType aType, Guid aGuid);
         internal ICurrency GetCurrency(Guid aCurrencyGuid);
     }
 }

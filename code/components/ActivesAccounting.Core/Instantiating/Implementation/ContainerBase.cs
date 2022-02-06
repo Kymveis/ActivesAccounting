@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
@@ -14,6 +15,8 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
         protected abstract string ItemName { get; }
         protected IEnumerable<T> Items => _itemsByGuid.Values;
 
+        public void Clear() => _itemsByGuid.Clear();
+
         protected T GetItemByGuid(Guid aGuid) =>
             _itemsByGuid.TryGetValue(aGuid, out var item)
                 ? item
@@ -24,6 +27,12 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
                 ? aItem
                 : throw Exceptions.AlreadyHasItem(ItemName, aGuid, "Guid");
 
-        public void Clear() => _itemsByGuid.Clear();
+        protected void ValidateUniqueName(string aName, Func<T, string> aNameGetter)
+        {
+            if (Items.Any(i => aNameGetter(i).Equals(aName, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                throw Exceptions.AlreadyHasItem(ItemName, aName, "Name");
+            }
+        }
     }
 }

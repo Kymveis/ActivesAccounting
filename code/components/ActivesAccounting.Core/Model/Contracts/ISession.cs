@@ -7,5 +7,6 @@ namespace ActivesAccounting.Core.Model.Contracts
         IEnumerable<IRecord> Records { get; }
         IEnumerable<ICurrencyPrice> Prices { get; }
         IEnumerable<ICurrency> Currencies { get; }
+        IEnumerable<IPlatform> Platforms { get; }
     }
 }

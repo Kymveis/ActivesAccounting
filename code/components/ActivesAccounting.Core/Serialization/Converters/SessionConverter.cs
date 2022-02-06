@@ -11,6 +11,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
     {
         private static class Names
         {
+            public const string PLATFORMS = "Platforms";
             public const string CURRENCIES = "Currencies";
             public const string PRICES = "Prices";
             public const string RECORDS = "Records";
@@ -23,6 +24,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         protected override void Write(SerializingSession aSession, ISession aValue)
         {
+            aSession.WriteProperty(aValue.Platforms, Names.PLATFORMS);
             aSession.WriteProperty(aValue.Currencies, Names.CURRENCIES);
             aSession.WriteProperty(aValue.Prices, Names.PRICES);
             aSession.WriteProperty(aValue.Records, Names.RECORDS);
@@ -30,11 +32,12 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         protected override ISession Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
         {
+            var platforms = Read<IReadOnlyCollection<IPlatform>>(ref aReader, Names.PLATFORMS, aOptions);
             var currencies = Read<IReadOnlyCollection<ICurrency>>(ref aReader, Names.CURRENCIES, aOptions);
             var prices = Read<IReadOnlyCollection<ICurrencyPrice>>(ref aReader, Names.PRICES, aOptions);
             var records = Read<IReadOnlyCollection<IRecord>>(ref aReader, Names.RECORDS, aOptions);
 
-            return _sessionFactory.CreateSession(records, prices, currencies);
+            return _sessionFactory.CreateSession(records, prices, currencies, platforms);
         }
     }
 }
