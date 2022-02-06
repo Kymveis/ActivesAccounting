@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ActivesAccounting.Core\ActivesAccounting.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Session\Contracts\" />
+    <Folder Include="Session\Implementation\" />
+  </ItemGroup>
+
+</Project>
