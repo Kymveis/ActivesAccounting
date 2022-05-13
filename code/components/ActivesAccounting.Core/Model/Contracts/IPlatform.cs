@@ -1,7 +1,6 @@
-﻿namespace ActivesAccounting.Core.Model.Contracts
+﻿namespace ActivesAccounting.Core.Model.Contracts;
+
+public interface IPlatform : IUniqueItem
 {
-    public interface IPlatform : IUniqueItem
-    {
-        string Name { get; }
-    }
+    string Name { get; }
 }

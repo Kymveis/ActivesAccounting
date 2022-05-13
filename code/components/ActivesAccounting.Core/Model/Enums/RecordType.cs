@@ -1,10 +1,9 @@
-﻿namespace ActivesAccounting.Core.Model.Enums
+﻿namespace ActivesAccounting.Core.Model.Enums;
+
+public enum RecordType
 {
-    public enum RecordType
-    {
-        Undefined,
-        Deposit,
-        Transfer,
-        Withdrawal
-    }
+    Undefined,
+    Deposit,
+    Transfer,
+    Withdrawal
 }

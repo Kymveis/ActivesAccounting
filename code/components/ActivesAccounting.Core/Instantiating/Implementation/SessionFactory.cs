@@ -50,40 +50,39 @@ using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Utils;
 
-namespace ActivesAccounting.Core.Instantiating.Implementation
+namespace ActivesAccounting.Core.Instantiating.Implementation;
+
+internal sealed class SessionFactory : ISessionFactory
 {
-    internal sealed class SessionFactory : ISessionFactory
+    private sealed class Session : ISession
     {
-        private sealed class Session : ISession
-        {
-            private readonly IRecordsContainer _recordsContainer;
-            private readonly IPricesContainer _pricesContainer;
-            private readonly ICurrenciesContainer _currenciesContainer;
-            private readonly IPlatformsContainer _platformsContainer;
+        private readonly IRecordsContainer _recordsContainer;
+        private readonly IPricesContainer _pricesContainer;
+        private readonly ICurrenciesContainer _currenciesContainer;
+        private readonly IPlatformsContainer _platformsContainer;
 
-            public Session(
-                IRecordsContainer aRecordsContainer,
-                IPricesContainer aPricesContainer,
-                ICurrenciesContainer aCurrenciesContainer,
-                IPlatformsContainer aPlatformsContainer)
-            {
-                _recordsContainer = aRecordsContainer;
-                _pricesContainer = aPricesContainer;
-                _currenciesContainer = aCurrenciesContainer;
-                _platformsContainer = aPlatformsContainer;
-            }
-
-            public IEnumerable<IRecord> Records => _recordsContainer.Records;
-            public IEnumerable<ICurrencyPrice> Prices => _pricesContainer.Prices;
-            public IEnumerable<ICurrency> Currencies => _currenciesContainer.Currencies;
-            public IEnumerable<IPlatform> Platforms => _platformsContainer.Platforms;
-        };
-
-        public ISession CreateSession(
+        public Session(
             IRecordsContainer aRecordsContainer,
             IPricesContainer aPricesContainer,
             ICurrenciesContainer aCurrenciesContainer,
-            IPlatformsContainer aPlatformsContainer) =>
-            new Session(aRecordsContainer, aPricesContainer, aCurrenciesContainer, aPlatformsContainer);
-    }
+            IPlatformsContainer aPlatformsContainer)
+        {
+            _recordsContainer = aRecordsContainer;
+            _pricesContainer = aPricesContainer;
+            _currenciesContainer = aCurrenciesContainer;
+            _platformsContainer = aPlatformsContainer;
+        }
+
+        public IEnumerable<IRecord> Records => _recordsContainer.Records;
+        public IEnumerable<ICurrencyPrice> Prices => _pricesContainer.Prices;
+        public IEnumerable<ICurrency> Currencies => _currenciesContainer.Currencies;
+        public IEnumerable<IPlatform> Platforms => _platformsContainer.Platforms;
+    };
+
+    public ISession CreateSession(
+        IRecordsContainer aRecordsContainer,
+        IPricesContainer aPricesContainer,
+        ICurrenciesContainer aCurrenciesContainer,
+        IPlatformsContainer aPlatformsContainer) =>
+        new Session(aRecordsContainer, aPricesContainer, aCurrenciesContainer, aPlatformsContainer);
 }

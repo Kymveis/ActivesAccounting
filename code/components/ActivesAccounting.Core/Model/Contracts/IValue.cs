@@ -1,9 +1,8 @@
-﻿namespace ActivesAccounting.Core.Model.Contracts
+﻿namespace ActivesAccounting.Core.Model.Contracts;
+
+public interface IValue
 {
-    public interface IValue
-    {
-        ICurrency Currency { get; }
-        decimal Count { get; }
-        IPlatform Platform { get; }
-    }
+    ICurrency Currency { get; }
+    decimal Count { get; }
+    IPlatform Platform { get; }
 }

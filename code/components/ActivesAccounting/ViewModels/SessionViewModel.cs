@@ -17,136 +17,135 @@ using ActivesAccounting.Session.Implementation;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
-namespace ActivesAccounting.ViewModels
+namespace ActivesAccounting.ViewModels;
+
+internal sealed class SessionViewModel : ObservableObject
 {
-    internal sealed class SessionViewModel : ObservableObject
+    private readonly AppSession _session = new();
+
+    private readonly IPlatformsContainer _platformsContainer;
+    private readonly ICurrenciesContainer _currenciesContainer;
+    private readonly IPricesContainer _pricesContainer;
+    private readonly IRecordsContainer _recordsContainer;
+    private readonly ISessionFactory _sessionFactory;
+    private readonly ISessionSerializer _sessionSerializer;
+    private readonly IValueFactory _valueFactory;
+
+    public SessionViewModel(
+        IPlatformsContainer aPlatformsContainer,
+        ICurrenciesContainer aCurrenciesContainer,
+        IPricesContainer aPricesContainer,
+        IRecordsContainer aRecordsContainer,
+        ISessionFactory aSessionFactory,
+        ISessionSerializer aSessionSerializer,
+        IValueFactory aValueFactory)
     {
-        private readonly AppSession _session = new();
+        _platformsContainer = aPlatformsContainer;
+        _currenciesContainer = aCurrenciesContainer;
+        _pricesContainer = aPricesContainer;
+        _recordsContainer = aRecordsContainer;
+        _sessionFactory = aSessionFactory;
+        _sessionSerializer = aSessionSerializer;
+        _valueFactory = aValueFactory;
 
-        private readonly IPlatformsContainer _platformsContainer;
-        private readonly ICurrenciesContainer _currenciesContainer;
-        private readonly IPricesContainer _pricesContainer;
-        private readonly IRecordsContainer _recordsContainer;
-        private readonly ISessionFactory _sessionFactory;
-        private readonly ISessionSerializer _sessionSerializer;
-        private readonly IValueFactory _valueFactory;
+        var sessionCommandsContainer = new SessionCommandsContainer(_session);
 
-        public SessionViewModel(
-            IPlatformsContainer aPlatformsContainer,
-            ICurrenciesContainer aCurrenciesContainer,
-            IPricesContainer aPricesContainer,
-            IRecordsContainer aRecordsContainer,
-            ISessionFactory aSessionFactory,
-            ISessionSerializer aSessionSerializer,
-            IValueFactory aValueFactory)
+        CreateSession = new RelayCommand(createNewSession);
+        OpenSession = new AsyncRelayCommand(openSession);
+        SaveSession = sessionCommandsContainer.CreateAsyncCommand(saveSession);
+
+        AddRecord = sessionCommandsContainer.CreateCommand(addRecord);
+
+        void createNewSession()
         {
-            _platformsContainer = aPlatformsContainer;
-            _currenciesContainer = aCurrenciesContainer;
-            _pricesContainer = aPricesContainer;
-            _recordsContainer = aRecordsContainer;
-            _sessionFactory = aSessionFactory;
-            _sessionSerializer = aSessionSerializer;
-            _valueFactory = aValueFactory;
+            clearContainers();
+            setSession(_sessionFactory.CreateSession(
+                    _recordsContainer,
+                    _pricesContainer,
+                    _currenciesContainer,
+                    _platformsContainer),
+                sessionCommandsContainer);
+            _session.File = null;
+        }
 
-            var sessionCommandsContainer = new SessionCommandsContainer(_session);
-
-            CreateSession = new RelayCommand(createNewSession);
-            OpenSession = new AsyncRelayCommand(openSession);
-            SaveSession = sessionCommandsContainer.CreateAsyncCommand(saveSession);
-
-            AddRecord = sessionCommandsContainer.CreateCommand(addRecord);
-
-            void createNewSession()
+        async Task openSession()
+        {
+            if (DialogUtils.TryOpenFile(out var file))
             {
+                _session.File = file!;
+                await using var stream = _session.File.OpenRead();
                 clearContainers();
-                setSession(_sessionFactory.CreateSession(
-                        _recordsContainer,
-                        _pricesContainer,
-                        _currenciesContainer,
-                        _platformsContainer),
+                setSession(
+                    await _sessionSerializer.DeserializeAsync(stream, CancellationToken.None),
                     sessionCommandsContainer);
-                _session.File = null;
-            }
-
-            async Task openSession()
-            {
-                if (DialogUtils.TryOpenFile(out var file))
-                {
-                    _session.File = file!;
-                    await using var stream = _session.File.OpenRead();
-                    clearContainers();
-                    setSession(
-                        await _sessionSerializer.DeserializeAsync(stream, CancellationToken.None),
-                        sessionCommandsContainer);
-                }
-            }
-
-            async Task saveSession()
-            {
-                if (_session.File is null)
-                {
-                    if (!DialogUtils.TrySaveFile(out var file))
-                    {
-                        return;
-                    }
-
-                    _session.File = file!;
-                }
-
-                _session.File.Delete();
-
-                await _sessionSerializer.SerializeAsync(_session.File.Create(), _session.ActualSession,
-                    CancellationToken.None);
-            }
-
-            void addRecord()
-            {
-                var record = createFakeRecord();
-                RecordViewModels.Add(new RecordViewModel(record));
             }
         }
 
-        public ICommand CreateSession { get; }
-        public ICommand OpenSession { get; }
-        public ICommand SaveSession { get; }
-
-        public ICommand AddRecord { get; }
-
-        public ObservableCollection<RecordViewModel> RecordViewModels { get; } = new();
-
-        private IRecord createFakeRecord() =>
-            _recordsContainer.CreateRecord(
-                DateTime.Today,
-                RecordType.Transfer,
-                _valueFactory.CreateValue(
-                    _session.ActualSession.Platforms.FirstOrDefault()
-                    ?? _platformsContainer.CreatePlatform("HODL"),
-                    _session.ActualSession.Currencies.FirstOrDefault()
-                    ?? _currenciesContainer.CreateCurrency("BITOK", CurrencyType.Crypto),
-                    1),
-                _valueFactory.CreateValue(_session.ActualSession.Platforms.First(),
-                    _session.ActualSession.Currencies.First(), 1));
-
-        private void setSession(ISession aSession, SessionCommandsContainer aSessionCommandsContainer)
+        async Task saveSession()
         {
-            _session.ActualSession = aSession;
-            aSessionCommandsContainer.NotifySessionChanging();
+            if (_session.File is null)
+            {
+                if (!DialogUtils.TrySaveFile(out var file))
+                {
+                    return;
+                }
 
-            RecordViewModels.Clear();
-            aSession.Records.Select(aR => new RecordViewModel(aR)).ForEach(RecordViewModels.Add);
+                _session.File = file!;
+            }
+
+            _session.File.Delete();
+
+            await _sessionSerializer.SerializeAsync(_session.File.Create(), _session.ActualSession,
+                CancellationToken.None);
         }
 
-        private void clearContainers()
+        void addRecord()
         {
-            enumerateContainers().ForEach(aC => aC.Clear());
+            var record = createFakeRecord();
+            RecordViewModels.Add(new RecordViewModel(record));
+        }
+    }
 
-            IEnumerable<IContainer> enumerateContainers()
-            {
-                yield return _platformsContainer;
-                yield return _currenciesContainer;
-                yield return _pricesContainer;
-                yield return _recordsContainer;
-            }
+    public ICommand CreateSession { get; }
+    public ICommand OpenSession { get; }
+    public ICommand SaveSession { get; }
+
+    public ICommand AddRecord { get; }
+
+    public ObservableCollection<RecordViewModel> RecordViewModels { get; } = new();
+
+    private IRecord createFakeRecord() =>
+        _recordsContainer.CreateRecord(
+            DateTime.Today,
+            RecordType.Transfer,
+            _valueFactory.CreateValue(
+                _session.ActualSession.Platforms.FirstOrDefault()
+                ?? _platformsContainer.CreatePlatform("HODL"),
+                _session.ActualSession.Currencies.FirstOrDefault()
+                ?? _currenciesContainer.CreateCurrency("BITOK", CurrencyType.Crypto),
+                1),
+            _valueFactory.CreateValue(_session.ActualSession.Platforms.First(),
+                _session.ActualSession.Currencies.First(), 1));
+
+    private void setSession(ISession aSession, SessionCommandsContainer aSessionCommandsContainer)
+    {
+        _session.ActualSession = aSession;
+        aSessionCommandsContainer.NotifySessionChanging();
+
+        RecordViewModels.Clear();
+        aSession.Records.Select(aR => new RecordViewModel(aR)).ForEach(RecordViewModels.Add);
+    }
+
+    private void clearContainers()
+    {
+        enumerateContainers().ForEach(aC => aC.Clear());
+
+        IEnumerable<IContainer> enumerateContainers()
+        {
+            yield return _platformsContainer;
+            yield return _currenciesContainer;
+            yield return _pricesContainer;
+            yield return _recordsContainer;
         }
     }
 }

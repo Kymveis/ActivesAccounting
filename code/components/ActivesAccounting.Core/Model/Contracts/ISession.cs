@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace ActivesAccounting.Core.Model.Contracts
+namespace ActivesAccounting.Core.Model.Contracts;
+
+public interface ISession
 {
-    public interface ISession
-    {
-        IEnumerable<IRecord> Records { get; }
-        IEnumerable<ICurrencyPrice> Prices { get; }
-        IEnumerable<ICurrency> Currencies { get; }
-        IEnumerable<IPlatform> Platforms { get; }
-    }
+    IEnumerable<IRecord> Records { get; }
+    IEnumerable<ICurrencyPrice> Prices { get; }
+    IEnumerable<ICurrency> Currencies { get; }
+    IEnumerable<IPlatform> Platforms { get; }
 }

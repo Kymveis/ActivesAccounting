@@ -7,89 +7,88 @@ using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Model.Enums;
 using ActivesAccounting.Core.Utils;
 
-namespace ActivesAccounting.Core.Instantiating.Implementation
+namespace ActivesAccounting.Core.Instantiating.Implementation;
+
+internal sealed class RecordsContainer : ContainerBase<IRecord>, IRecordsContainer
 {
-    internal sealed class RecordsContainer : ContainerBase<IRecord>, IRecordsContainer
+    private sealed record Record(DateTime DateTime, RecordType RecordType,
+        IValue Source, IValue Target, IValue? Commission, Guid Guid) : IRecord;
+
+    private readonly IPricesContainer _pricesContainer;
+
+    public RecordsContainer(IPricesContainer aPricesContainer) =>
+        _pricesContainer = aPricesContainer ?? throw new ArgumentNullException(nameof(aPricesContainer));
+
+    protected override string ItemName => "record";
+    public IEnumerable<IRecord> Records => Items.OrderBy(aR => aR.DateTime);
+
+    public IRecord CreateRecord(
+        DateTime aDateTime,
+        RecordType aRecordType,
+        IValue aSource,
+        IValue aTarget,
+        IValue? aCommission = null) =>
+        createRecord(aDateTime, aRecordType, aSource, aTarget, aCommission, Guid.NewGuid());
+
+    IRecord IRecordsContainer.CreateRecord(
+        DateTime aDateTime,
+        RecordType aRecordType,
+        IValue aSource,
+        IValue aTarget,
+        IValue? aCommission,
+        Guid aGuid) =>
+        createRecord(aDateTime, aRecordType, aSource, aTarget, aCommission, aGuid);
+
+    private IRecord createRecord(
+        DateTime aDateTime,
+        RecordType aRecordType,
+        IValue aSource,
+        IValue aTarget,
+        IValue? aCommission,
+        Guid aGuid)
     {
-        private sealed record Record(DateTime DateTime, RecordType RecordType,
-            IValue Source, IValue Target, IValue? Commission, Guid Guid) : IRecord;
+        var record = AddItem(
+            new Record(
+                aDateTime,
+                aRecordType.ValidateEnum(RecordType.Undefined),
+                aSource,
+                aTarget,
+                aCommission,
+                aGuid),
+            aGuid);
 
-        private readonly IPricesContainer _pricesContainer;
-
-        public RecordsContainer(IPricesContainer aPricesContainer) =>
-            _pricesContainer = aPricesContainer ?? throw new ArgumentNullException(nameof(aPricesContainer));
-
-        protected override string ItemName => "record";
-        public IEnumerable<IRecord> Records => Items.OrderBy(aR => aR.DateTime);
-
-        public IRecord CreateRecord(
-            DateTime aDateTime,
-            RecordType aRecordType,
-            IValue aSource,
-            IValue aTarget,
-            IValue? aCommission = null) =>
-            createRecord(aDateTime, aRecordType, aSource, aTarget, aCommission, Guid.NewGuid());
-
-        IRecord IRecordsContainer.CreateRecord(
-            DateTime aDateTime,
-            RecordType aRecordType,
-            IValue aSource,
-            IValue aTarget,
-            IValue? aCommission,
-            Guid aGuid) =>
-            createRecord(aDateTime, aRecordType, aSource, aTarget, aCommission, aGuid);
-
-        private IRecord createRecord(
-            DateTime aDateTime,
-            RecordType aRecordType,
-            IValue aSource,
-            IValue aTarget,
-            IValue? aCommission,
-            Guid aGuid)
+        var exchangedCurrency = aTarget.Currency;
+        var unitCurrency = aSource.Currency;
+        if (exchangedCurrency != unitCurrency)
         {
-            var record = AddItem(
-                new Record(
-                    aDateTime,
-                    aRecordType.ValidateEnum(RecordType.Undefined),
-                    aSource,
-                    aTarget,
-                    aCommission,
-                    aGuid),
-                aGuid);
+            _pricesContainer.CreatePrice(
+                exchangedCurrency,
+                unitCurrency,
+                calculateCount(),
+                PriceType.Recorded,
+                aDateTime);
+        }
 
-            var exchangedCurrency = aTarget.Currency;
-            var unitCurrency = aSource.Currency;
-            if (exchangedCurrency != unitCurrency)
+        return record;
+
+        decimal calculateCount()
+        {
+            var exchangedCount = aTarget.Count;
+            var unitCount = aSource.Count;
+            if (aCommission is null)
             {
-                _pricesContainer.CreatePrice(
-                    exchangedCurrency,
-                    unitCurrency,
-                    calculateCount(),
-                    PriceType.Recorded,
-                    aDateTime);
+                return unitCount / exchangedCount;
             }
 
-            return record;
-
-            decimal calculateCount()
+            var commissionCurrency = aCommission.Currency;
+            if (commissionCurrency != unitCurrency)
             {
-                var exchangedCount = aTarget.Count;
-                var unitCount = aSource.Count;
-                if (aCommission is null)
-                {
-                    return unitCount / exchangedCount;
-                }
-
-                var commissionCurrency = aCommission.Currency;
-                if (commissionCurrency != unitCurrency)
-                {
-                    throw new NotImplementedException(
-                        $"{commissionCurrency.Name} to {unitCurrency.Name} cross-currency commissions calculating is not implemented.");
-                }
-
-                var commissionCount = aCommission.Count;
-                return (unitCount - commissionCount) / exchangedCount;
+                throw new NotImplementedException(
+                    $"{commissionCurrency.Name} to {unitCurrency.Name} cross-currency commissions calculating is not implemented.");
             }
+
+            var commissionCount = aCommission.Count;
+            return (unitCount - commissionCount) / exchangedCount;
         }
     }
 }

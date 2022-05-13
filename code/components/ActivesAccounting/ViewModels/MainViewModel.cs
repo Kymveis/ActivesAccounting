@@ -6,32 +6,31 @@ using Autofac;
 
 using IContainer = Autofac.IContainer;
 
-namespace ActivesAccounting.ViewModels
+namespace ActivesAccounting.ViewModels;
+
+internal sealed class MainViewModel
 {
-    internal sealed class MainViewModel
+    public MainViewModel()
     {
-        public MainViewModel()
+        var container = createContainer();
+
+        SessionViewModel = new SessionViewModel(
+            container.Resolve<IPlatformsContainer>(),
+            container.Resolve<ICurrenciesContainer>(),
+            container.Resolve<IPricesContainer>(),
+            container.Resolve<IRecordsContainer>(),
+            container.Resolve<ISessionFactory>(),
+            container.Resolve<ISessionSerializer>(),
+            container.Resolve<IValueFactory>());
+
+        IContainer createContainer()
         {
-            var container = createContainer();
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterModule<CoreAddIn>();
 
-            SessionViewModel = new SessionViewModel(
-                container.Resolve<IPlatformsContainer>(),
-                container.Resolve<ICurrenciesContainer>(),
-                container.Resolve<IPricesContainer>(),
-                container.Resolve<IRecordsContainer>(),
-                container.Resolve<ISessionFactory>(),
-                container.Resolve<ISessionSerializer>(),
-                container.Resolve<IValueFactory>());
-
-            IContainer createContainer()
-            {
-                var containerBuilder = new ContainerBuilder();
-                containerBuilder.RegisterModule<CoreAddIn>();
-
-                return containerBuilder.Build();
-            }
+            return containerBuilder.Build();
         }
-
-        public SessionViewModel SessionViewModel { get; }
     }
+
+    public SessionViewModel SessionViewModel { get; }
 }

@@ -1,9 +1,8 @@
-﻿namespace ActivesAccounting.Core.Model.Enums
+﻿namespace ActivesAccounting.Core.Model.Enums;
+
+public enum PriceType
 {
-    public enum PriceType
-    {
-        Undefined,
-        Recorded,
-        Calculated
-    }
+    Undefined,
+    Recorded,
+    Calculated
 }

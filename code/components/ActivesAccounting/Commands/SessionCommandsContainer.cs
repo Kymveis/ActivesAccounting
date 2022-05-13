@@ -8,40 +8,39 @@ using ActivesAccounting.Session.Contracts;
 
 using Microsoft.Toolkit.Mvvm.Input;
 
-namespace ActivesAccounting.Commands
+namespace ActivesAccounting.Commands;
+
+internal sealed class SessionCommandsContainer
 {
-    internal sealed class SessionCommandsContainer
+    private readonly LinkedList<RelayCommand> _relayCommands = new();
+    private readonly LinkedList<AsyncRelayCommand> _asyncRelayCommands = new();
+
+    private readonly IAppSession _appSession;
+
+    public SessionCommandsContainer(IAppSession aAppSession) =>
+        _appSession = aAppSession;
+
+    public ICommand CreateCommand(Action aAction)
     {
-        private readonly LinkedList<RelayCommand> _relayCommands = new();
-        private readonly LinkedList<AsyncRelayCommand> _asyncRelayCommands = new();
+        var command = new RelayCommand(aAction, isSessionOpen);
+        _relayCommands.AddLast(command);
 
-        private readonly IAppSession _appSession;
-
-        public SessionCommandsContainer(IAppSession aAppSession) =>
-            _appSession = aAppSession;
-
-        public ICommand CreateCommand(Action aAction)
-        {
-            var command = new RelayCommand(aAction, isSessionOpen);
-            _relayCommands.AddLast(command);
-
-            return command;
-        }
-
-        public ICommand CreateAsyncCommand(Func<Task> aAction)
-        {
-            var command = new AsyncRelayCommand(aAction, isSessionOpen);
-            _asyncRelayCommands.AddLast(command);
-
-            return command;
-        }
-
-        public void NotifySessionChanging()
-        {
-            _relayCommands.ForEach(aC => aC.NotifyCanExecuteChanged());
-            _asyncRelayCommands.ForEach(aC => aC.NotifyCanExecuteChanged());
-        }
-
-        private bool isSessionOpen() => _appSession.IsSessionOpen;
+        return command;
     }
+
+    public ICommand CreateAsyncCommand(Func<Task> aAction)
+    {
+        var command = new AsyncRelayCommand(aAction, isSessionOpen);
+        _asyncRelayCommands.AddLast(command);
+
+        return command;
+    }
+
+    public void NotifySessionChanging()
+    {
+        _relayCommands.ForEach(aC => aC.NotifyCanExecuteChanged());
+        _asyncRelayCommands.ForEach(aC => aC.NotifyCanExecuteChanged());
+    }
+
+    private bool isSessionOpen() => _appSession.IsSessionOpen;
 }

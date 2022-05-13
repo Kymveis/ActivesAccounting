@@ -1,9 +1,8 @@
 ﻿using ActivesAccounting.Core.Model.Contracts;
 
-namespace ActivesAccounting.Core.Instantiating.Contracts
+namespace ActivesAccounting.Core.Instantiating.Contracts;
+
+public interface IValueFactory
 {
-    public interface IValueFactory
-    {
-        IValue CreateValue(IPlatform aPlatform, ICurrency aCurrency, decimal aCount);
-    }
+    IValue CreateValue(IPlatform aPlatform, ICurrency aCurrency, decimal aCount);
 }

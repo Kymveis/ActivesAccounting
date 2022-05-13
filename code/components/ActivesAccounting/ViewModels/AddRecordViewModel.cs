@@ -1,7 +1,6 @@
-﻿namespace ActivesAccounting.ViewModels
+﻿namespace ActivesAccounting.ViewModels;
+
+internal sealed class AddRecordViewModel
 {
-    internal sealed class AddRecordViewModel
-    {
         
-    }
 }

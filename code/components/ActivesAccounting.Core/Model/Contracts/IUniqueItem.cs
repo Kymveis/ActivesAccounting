@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace ActivesAccounting.Core.Model.Contracts
+namespace ActivesAccounting.Core.Model.Contracts;
+
+public interface IUniqueItem
 {
-    public interface IUniqueItem
-    {
-        Guid Guid { get; }
-    }
+    Guid Guid { get; }
 }

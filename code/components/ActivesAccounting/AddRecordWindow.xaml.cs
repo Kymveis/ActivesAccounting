@@ -12,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ActivesAccounting
+namespace ActivesAccounting;
+
+/// <summary>
+/// Interaction logic for AddRecordWindow.xaml
+/// </summary>
+public partial class AddRecordWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for AddRecordWindow.xaml
-    /// </summary>
-    public partial class AddRecordWindow : Window
+    public AddRecordWindow()
     {
-        public AddRecordWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

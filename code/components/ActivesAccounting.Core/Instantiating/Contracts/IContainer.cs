@@ -1,7 +1,6 @@
-﻿namespace ActivesAccounting.Core.Instantiating.Contracts
+﻿namespace ActivesAccounting.Core.Instantiating.Contracts;
+
+public interface IContainer
 {
-    public interface IContainer
-    {
-        void Clear();
-    }
+    void Clear();
 }

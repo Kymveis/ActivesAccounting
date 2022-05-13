@@ -4,25 +4,24 @@ using System.Collections.Generic;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Model.Enums;
 
-namespace ActivesAccounting.Core.Instantiating.Contracts
+namespace ActivesAccounting.Core.Instantiating.Contracts;
+
+public interface IRecordsContainer : IContainer
 {
-    public interface IRecordsContainer : IContainer
-    {
-        IEnumerable<IRecord> Records { get; }
+    IEnumerable<IRecord> Records { get; }
 
-        IRecord CreateRecord(
-            DateTime aDateTime,
-            RecordType aRecordType,
-            IValue aSource,
-            IValue aTarget,
-            IValue? aCommission = null);
+    IRecord CreateRecord(
+        DateTime aDateTime,
+        RecordType aRecordType,
+        IValue aSource,
+        IValue aTarget,
+        IValue? aCommission = null);
 
-        internal IRecord CreateRecord(
-            DateTime aDateTime,
-            RecordType aRecordType,
-            IValue aSource,
-            IValue aTarget,
-            IValue? aCommission,
-            Guid aGuid);
-    }
+    internal IRecord CreateRecord(
+        DateTime aDateTime,
+        RecordType aRecordType,
+        IValue aSource,
+        IValue aTarget,
+        IValue? aCommission,
+        Guid aGuid);
 }

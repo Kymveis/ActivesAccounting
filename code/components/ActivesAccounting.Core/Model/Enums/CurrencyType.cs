@@ -1,10 +1,9 @@
-﻿namespace ActivesAccounting.Core.Model.Enums
+﻿namespace ActivesAccounting.Core.Model.Enums;
+
+public enum CurrencyType
 {
-    public enum CurrencyType
-    {
-        Undefined,
-        Fiat,
-        Crypto,
-        Stock
-    }
+    Undefined,
+    Fiat,
+    Crypto,
+    Stock
 }
