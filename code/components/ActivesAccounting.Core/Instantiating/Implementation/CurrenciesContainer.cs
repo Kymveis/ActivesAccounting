@@ -8,7 +8,7 @@ using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Instantiating.Implementation;
 
-internal sealed class CurrenciesContainer : ContainerBase<ICurrency>, ICurrenciesContainer
+internal sealed class CurrenciesContainer : NamedItemsContainerBase<ICurrency>, ICurrenciesContainer
 {
     private record Currency(string Name, CurrencyType Type, Guid Guid) : ICurrency;
 
@@ -23,9 +23,7 @@ internal sealed class CurrenciesContainer : ContainerBase<ICurrency>, ICurrencie
 
     private ICurrency createCurrency(string aName, CurrencyType aType, Guid aGuid)
     {
-        ValidateUniqueName(
-            aName.ValidateNotNullOrWhitespace(),
-            aC => aC.Name);
+        ValidateUniqueName(aName.ValidateNotEmptyOrWhitespace());
 
         return AddItem(new Currency(aName, aType.ValidateEnum(CurrencyType.Undefined), aGuid), aGuid);
     }

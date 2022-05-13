@@ -2,8 +2,7 @@
 
 namespace ActivesAccounting.Core.Model.Contracts;
 
-public interface ICurrency : IUniqueItem
+public interface ICurrency : IUniqueItem, INamedItem
 {
-    string Name { get; }
     CurrencyType Type { get; }
 }

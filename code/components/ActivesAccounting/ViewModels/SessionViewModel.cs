@@ -95,7 +95,10 @@ internal sealed class SessionViewModel : ObservableObject
 
             _session.File.Delete();
 
-            await _sessionSerializer.SerializeAsync(_session.File.Create(), _session.ActualSession,
+            await using var fileStream = _session.File.Create();
+            await _sessionSerializer.SerializeAsync(
+                fileStream,
+                _session.ActualSession,
                 CancellationToken.None);
         }
 
@@ -138,14 +141,9 @@ internal sealed class SessionViewModel : ObservableObject
 
     private void clearContainers()
     {
-        enumerateContainers().ForEach(aC => aC.Clear());
-
-        IEnumerable<IContainer> enumerateContainers()
-        {
-            yield return _platformsContainer;
-            yield return _currenciesContainer;
-            yield return _pricesContainer;
-            yield return _recordsContainer;
-        }
+        _platformsContainer.Clear();
+        _currenciesContainer.Clear();
+        _pricesContainer.Clear();
+        _recordsContainer.Clear();
     }
 }

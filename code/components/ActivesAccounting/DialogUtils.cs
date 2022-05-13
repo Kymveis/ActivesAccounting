@@ -12,7 +12,7 @@ internal static class DialogUtils
         tryGetDialogFile(new OpenFileDialog {CheckFileExists = true}, out aFile);
 
     public static bool TrySaveFile(out FileInfo? aFile) =>
-        tryGetDialogFile(new SaveFileDialog(), out aFile);
+        tryGetDialogFile(new SaveFileDialog {CheckFileExists = false}, out aFile);
 
     private static bool tryGetDialogFile(FileDialog aDialog, out FileInfo? aFile)
     {
@@ -30,7 +30,6 @@ internal static class DialogUtils
         void initializeDialog()
         {
             aDialog.Title = "Select file";
-            aDialog.CheckFileExists = true;
             aDialog.DefaultExt = $".{EXTENSION}";
             aDialog.Filter = $"Actives accounting files (.{EXTENSION})|*.{EXTENSION}";
         }

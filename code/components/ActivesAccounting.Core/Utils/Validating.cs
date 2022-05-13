@@ -64,9 +64,9 @@ public static class Validating
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ValidateNotNullOrWhitespace(this string aString,
+    public static string ValidateNotEmptyOrWhitespace(this string aString,
         [CallerArgumentExpression("aString")] string aArgumentName = "") =>
         string.IsNullOrWhiteSpace(aString)
-            ? throw new ArgumentException("Value cannot be null or whitespace.", aArgumentName)
+            ? throw new ArgumentException("Value cannot be empty or whitespace.", aArgumentName)
             : aString;
 }

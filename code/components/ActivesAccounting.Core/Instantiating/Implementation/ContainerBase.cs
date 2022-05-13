@@ -26,12 +26,4 @@ internal abstract class ContainerBase<T> : IContainer where T : IUniqueItem
         _itemsByGuid.TryAdd(aGuid, aItem)
             ? aItem
             : throw Exceptions.AlreadyHasItem(ItemName, aGuid, "Guid");
-
-    protected void ValidateUniqueName(string aName, Func<T, string> aNameGetter)
-    {
-        if (Items.Any(i => aNameGetter(i).Equals(aName, StringComparison.InvariantCultureIgnoreCase)))
-        {
-            throw Exceptions.AlreadyHasItem(ItemName, aName, "Name");
-        }
-    }
 }

@@ -7,7 +7,7 @@ using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Instantiating.Implementation;
 
-internal sealed class PlatformsContainer : ContainerBase<IPlatform>, IPlatformsContainer
+internal sealed class PlatformsContainer : NamedItemsContainerBase<IPlatform>, IPlatformsContainer
 {
     private sealed record Platform(string Name, Guid Guid) : IPlatform;
 
@@ -22,7 +22,7 @@ internal sealed class PlatformsContainer : ContainerBase<IPlatform>, IPlatformsC
 
     private IPlatform createPlatform(string aName, Guid aGuid)
     {
-        ValidateUniqueName(aName.ValidateNotNullOrWhitespace(), aP => aP.Name);
+        ValidateUniqueName(aName.ValidateNotEmptyOrWhitespace());
 
         return AddItem(new Platform(aName, aGuid), aGuid);
     }
