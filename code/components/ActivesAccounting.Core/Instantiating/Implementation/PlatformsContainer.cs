@@ -22,7 +22,7 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
 
         private IPlatform createPlatform(string aName, Guid aGuid)
         {
-            ValidateUniqueName(aName.ValidateNotNullOrWhitespace(nameof(aName)), aP => aP.Name);
+            ValidateUniqueName(aName.ValidateNotNullOrWhitespace(), aP => aP.Name);
 
             return AddItem(new Platform(aName, aGuid), aGuid);
         }

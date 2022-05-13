@@ -9,6 +9,11 @@ namespace ActivesAccounting.Core.Serialization.Converters
 {
     internal sealed class SessionConverter : ConverterBase<ISession>
     {
+        private readonly IRecordsContainer _recordsContainer;
+        private readonly IPricesContainer _pricesContainer;
+        private readonly ICurrenciesContainer _currenciesContainer;
+        private readonly IPlatformsContainer _platformsContainer;
+
         private static class Names
         {
             public const string PLATFORMS = "Platforms";
@@ -19,8 +24,19 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         private readonly ISessionFactory _sessionFactory;
 
-        internal SessionConverter(ISessionFactory aSessionFactory) =>
-            _sessionFactory = aSessionFactory.ValidateNotNull(nameof(aSessionFactory));
+        public SessionConverter(
+            ISessionFactory aSessionFactory,
+            IRecordsContainer aRecordsContainer,
+            IPricesContainer aPricesContainer,
+            ICurrenciesContainer aCurrenciesContainer,
+            IPlatformsContainer aPlatformsContainer)
+        {
+            _sessionFactory = aSessionFactory;
+            _recordsContainer = aRecordsContainer;
+            _pricesContainer = aPricesContainer;
+            _currenciesContainer = aCurrenciesContainer;
+            _platformsContainer = aPlatformsContainer;
+        }
 
         protected override void Write(SerializingSession aSession, ISession aValue)
         {
@@ -32,12 +48,16 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         protected override ISession Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
         {
-            var platforms = Read<IReadOnlyCollection<IPlatform>>(ref aReader, Names.PLATFORMS, aOptions);
-            var currencies = Read<IReadOnlyCollection<ICurrency>>(ref aReader, Names.CURRENCIES, aOptions);
-            var prices = Read<IReadOnlyCollection<ICurrencyPrice>>(ref aReader, Names.PRICES, aOptions);
-            var records = Read<IReadOnlyCollection<IRecord>>(ref aReader, Names.RECORDS, aOptions);
+            Read<IReadOnlyCollection<IPlatform>>(ref aReader, Names.PLATFORMS, aOptions);
+            Read<IReadOnlyCollection<ICurrency>>(ref aReader, Names.CURRENCIES, aOptions);
+            Read<IReadOnlyCollection<ICurrencyPrice>>(ref aReader, Names.PRICES, aOptions);
+            Read<IReadOnlyCollection<IRecord>>(ref aReader, Names.RECORDS, aOptions);
 
-            return _sessionFactory.CreateSession(records, prices, currencies, platforms);
+            return _sessionFactory.CreateSession(
+                _recordsContainer,
+                _pricesContainer,
+                _currenciesContainer,
+                _platformsContainer);
         }
     }
 }

@@ -42,8 +42,8 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         private readonly ICurrenciesContainer _currenciesContainer;
 
-        public CurrencyConverter(ICurrenciesContainer aCurrenciesContainer) => _currenciesContainer =
-            aCurrenciesContainer.ValidateNotNull(nameof(aCurrenciesContainer));
+        public CurrencyConverter(ICurrenciesContainer aCurrenciesContainer) => 
+            _currenciesContainer = aCurrenciesContainer;
 
         protected override void Write(SerializingSession aSession, ICurrency aValue)
         {

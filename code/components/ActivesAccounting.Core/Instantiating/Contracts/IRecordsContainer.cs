@@ -14,13 +14,15 @@ namespace ActivesAccounting.Core.Instantiating.Contracts
             DateTime aDateTime,
             RecordType aRecordType,
             IValue aSource,
-            IValue aTarget);
+            IValue aTarget,
+            IValue? aCommission = null);
 
         internal IRecord CreateRecord(
             DateTime aDateTime,
             RecordType aRecordType,
             IValue aSource,
             IValue aTarget,
+            IValue? aCommission,
             Guid aGuid);
     }
 }

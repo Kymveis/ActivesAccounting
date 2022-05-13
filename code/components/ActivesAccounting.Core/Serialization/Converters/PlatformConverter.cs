@@ -15,10 +15,8 @@ namespace ActivesAccounting.Core.Serialization.Converters
 
         private readonly IPlatformsContainer _platformsContainer;
 
-        public PlatformConverter(IPlatformsContainer aPlatformsContainer)
-        {
-            _platformsContainer = aPlatformsContainer.ValidateNotNull(nameof(aPlatformsContainer));
-        }
+        public PlatformConverter(IPlatformsContainer aPlatformsContainer) => 
+            _platformsContainer = aPlatformsContainer;
 
         protected override void Write(SerializingSession aSession, IPlatform aValue)
         {

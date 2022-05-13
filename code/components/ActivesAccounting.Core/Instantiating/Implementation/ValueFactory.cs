@@ -6,12 +6,9 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
 {
     internal sealed class ValueFactory : IValueFactory
     {
-        private sealed record SimpleValue(ICurrency Currency, decimal Count, IPlatform Platform) : ISimpleValue;
+        private sealed record SimpleValue(ICurrency Currency, decimal Count, IPlatform Platform) : IValue;
 
-        public ISimpleValue CreateSimpleValue(IPlatform aPlatform, ICurrency aCurrency, decimal aCount) =>
-            new SimpleValue(
-                aCurrency.ValidateNotNull(nameof(aCurrency)),
-                aCount.ValidateMoreThanZero(nameof(aCount)),
-                aPlatform.ValidateNotNull(nameof(aPlatform)));
+        public IValue CreateValue(IPlatform aPlatform, ICurrency aCurrency, decimal aCount) =>
+            new SimpleValue(aCurrency, aCount.ValidateMoreThanZero(), aPlatform);
     }
 }

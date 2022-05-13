@@ -7,8 +7,7 @@ namespace ActivesAccounting.Core.Utils
     {
         public static void ForEach<T>(this IEnumerable<T> aItems, Action<T> aAction)
         {
-            aAction.ValidateNotNull(nameof(aAction));
-            foreach (var item in aItems.ValidateNotNull(nameof(aItems)))
+            foreach (var item in aItems)
             {
                 aAction(item);
             }

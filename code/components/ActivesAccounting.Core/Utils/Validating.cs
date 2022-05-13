@@ -7,7 +7,11 @@ namespace ActivesAccounting.Core.Utils
     public static class Validating
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T ValidateEnum<T>(this T aEnum, string aArgumentName, T aUndefinedValue) where T : struct, Enum
+        public static T ValidateEnum<T>(
+            this T aEnum,
+            T aUndefinedValue,
+            [CallerArgumentExpression("aEnum")] string aArgumentName = "")
+            where T : struct, Enum
         {
             if (!Enum.IsDefined(aEnum))
             {
@@ -23,14 +27,20 @@ namespace ActivesAccounting.Core.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static decimal ValidateMoreThanZero(this decimal aValue, string aArgumentName)
+        public static decimal ValidateMoreThanZero(
+            this decimal aValue,
+            [CallerArgumentExpression("aValue")] string aArgumentName = "")
         {
             const decimal ZERO_VALUE = 0;
-            return aValue > ZERO_VALUE ? aValue : throw createLessOrEqualException(aValue, aArgumentName, ZERO_VALUE);
+            return aValue > ZERO_VALUE ? aValue : throw Exceptions.LessOrEqual(aValue, aArgumentName, ZERO_VALUE);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T ValidateMinValue<T>(this T aValue, string aArgumentName, T aMinValue, bool aIncluding)
+        public static T ValidateMinValue<T>(
+            this T aValue,
+            T aMinValue,
+            bool aIncluding,
+            [CallerArgumentExpression("aValue")] string aArgumentName = "")
             where T : IComparable<T>
         {
             var comparisonResult = aValue.CompareTo(aMinValue);
@@ -46,7 +56,7 @@ namespace ActivesAccounting.Core.Utils
             {
                 if (comparisonResult <= -1)
                 {
-                    throw createLessOrEqualException(aValue, aArgumentName, aMinValue);
+                    throw Exceptions.LessOrEqual(aValue, aArgumentName, aMinValue);
                 }
             }
 
@@ -54,17 +64,10 @@ namespace ActivesAccounting.Core.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T ValidateNotNull<T>(this T aValue, string aArgumentName) where T : class =>
-            aValue ?? throw new ArgumentNullException(aArgumentName);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ValidateNotNullOrWhitespace(this string aString, string aArgumentName) =>
+        public static string ValidateNotNullOrWhitespace(this string aString,
+            [CallerArgumentExpression("aString")] string aArgumentName = "") =>
             string.IsNullOrWhiteSpace(aString)
                 ? throw new ArgumentException("Value cannot be null or whitespace.", aArgumentName)
                 : aString;
-
-        private static ArgumentOutOfRangeException createLessOrEqualException<T>(T aValue, string aArgumentName,
-            T aMinValue) where T : IComparable<T> =>
-            new(aArgumentName, aValue, $"Value cannot be less than or equal to {aMinValue}");
     }
 }

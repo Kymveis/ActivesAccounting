@@ -80,10 +80,10 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
             Guid aGuid) =>
             AddItem(
                 new Price(
-                    aExchanged.ValidateNotNull(nameof(aExchanged)),
-                    aUnit.ValidateNotNull(nameof(aUnit)),
-                    aCount.ValidateMoreThanZero(nameof(aCount)),
-                    aType.ValidateEnum(nameof(aType), PriceType.Undefined),
+                    aExchanged,
+                    aUnit,
+                    aCount.ValidateMoreThanZero(),
+                    aType.ValidateEnum(PriceType.Undefined),
                     aDateTime,
                     aGuid), aGuid);
     }

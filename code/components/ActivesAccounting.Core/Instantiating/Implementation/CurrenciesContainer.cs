@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
@@ -25,10 +24,10 @@ namespace ActivesAccounting.Core.Instantiating.Implementation
         private ICurrency createCurrency(string aName, CurrencyType aType, Guid aGuid)
         {
             ValidateUniqueName(
-                aName.ValidateNotNullOrWhitespace(nameof(aName)),
+                aName.ValidateNotNullOrWhitespace(),
                 aC => aC.Name);
 
-            return AddItem(new Currency(aName, aType.ValidateEnum(nameof(aType), CurrencyType.Undefined), aGuid), aGuid);
+            return AddItem(new Currency(aName, aType.ValidateEnum(CurrencyType.Undefined), aGuid), aGuid);
         }
     }
 }

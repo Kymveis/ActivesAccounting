@@ -40,13 +40,13 @@ namespace ActivesAccounting.ViewModels
             ISessionSerializer aSessionSerializer,
             IValueFactory aValueFactory)
         {
-            _platformsContainer = aPlatformsContainer.ValidateNotNull(nameof(aPlatformsContainer));
-            _currenciesContainer = aCurrenciesContainer.ValidateNotNull(nameof(aCurrenciesContainer));
-            _pricesContainer = aPricesContainer.ValidateNotNull(nameof(aPricesContainer));
-            _recordsContainer = aRecordsContainer.ValidateNotNull(nameof(aRecordsContainer));
-            _sessionFactory = aSessionFactory.ValidateNotNull(nameof(aSessionFactory));
-            _sessionSerializer = aSessionSerializer.ValidateNotNull(nameof(aSessionSerializer));
-            _valueFactory = aValueFactory.ValidateNotNull(nameof(aValueFactory));
+            _platformsContainer = aPlatformsContainer;
+            _currenciesContainer = aCurrenciesContainer;
+            _pricesContainer = aPricesContainer;
+            _recordsContainer = aRecordsContainer;
+            _sessionFactory = aSessionFactory;
+            _sessionSerializer = aSessionSerializer;
+            _valueFactory = aValueFactory;
 
             var sessionCommandsContainer = new SessionCommandsContainer(_session);
 
@@ -60,17 +60,17 @@ namespace ActivesAccounting.ViewModels
             {
                 clearContainers();
                 setSession(_sessionFactory.CreateSession(
-                        _recordsContainer.Records,
-                        _pricesContainer.Prices,
-                        _currenciesContainer.Currencies,
-                        _platformsContainer.Platforms),
+                        _recordsContainer,
+                        _pricesContainer,
+                        _currenciesContainer,
+                        _platformsContainer),
                     sessionCommandsContainer);
                 _session.File = null;
             }
 
             async Task openSession()
             {
-                if (FileUtils.TryOpenFile(out var file))
+                if (DialogUtils.TryOpenFile(out var file))
                 {
                     _session.File = file!;
                     await using var stream = _session.File.OpenRead();
@@ -85,7 +85,7 @@ namespace ActivesAccounting.ViewModels
             {
                 if (_session.File is null)
                 {
-                    if (!FileUtils.TrySaveFile(out var file))
+                    if (!DialogUtils.TrySaveFile(out var file))
                     {
                         return;
                     }
@@ -118,13 +118,13 @@ namespace ActivesAccounting.ViewModels
             _recordsContainer.CreateRecord(
                 DateTime.Today,
                 RecordType.Transfer,
-                _valueFactory.CreateSimpleValue(
+                _valueFactory.CreateValue(
                     _session.ActualSession.Platforms.FirstOrDefault()
                     ?? _platformsContainer.CreatePlatform("HODL"),
                     _session.ActualSession.Currencies.FirstOrDefault()
                     ?? _currenciesContainer.CreateCurrency("BITOK", CurrencyType.Crypto),
                     1),
-                _valueFactory.CreateSimpleValue(_session.ActualSession.Platforms.First(),
+                _valueFactory.CreateValue(_session.ActualSession.Platforms.First(),
                     _session.ActualSession.Currencies.First(), 1));
 
         private void setSession(ISession aSession, SessionCommandsContainer aSessionCommandsContainer)

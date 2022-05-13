@@ -38,12 +38,13 @@ namespace ActivesAccounting.Core.Serialization.Converters
             public const string RECORD_TYPE = "RecordType";
             public const string SOURCE = "Source";
             public const string TARGET = "Target";
+            public const string COMMISSION = "Commission";
         }
 
         private readonly IRecordsContainer _recordsContainer;
 
         public RecordConverter(IRecordsContainer aRecordsContainer) =>
-            _recordsContainer = aRecordsContainer.ValidateNotNull(nameof(aRecordsContainer));
+            _recordsContainer = aRecordsContainer;
 
         protected override void Write(SerializingSession aSession, IRecord aValue)
         {
@@ -51,6 +52,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
             aSession.WriteProperty(RecordTypes.ToName[aValue.RecordType], Names.RECORD_TYPE);
             aSession.WriteProperty(aValue.Source, Names.SOURCE);
             aSession.WriteProperty(aValue.Target, Names.TARGET);
+            aSession.WriteProperty(aValue.Commission, Names.COMMISSION);
             aSession.WriteGuid(aValue);
         }
 
@@ -60,6 +62,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
             var recordType = RecordTypes.FromName[ReadString(ref aReader, Names.RECORD_TYPE)];
             var source = Read<IValue>(ref aReader, Names.SOURCE, aOptions);
             var target = Read<IValue>(ref aReader, Names.TARGET, aOptions);
+            var commission = Read<IValue>(ref aReader, Names.COMMISSION, aOptions, true);
             var guid = ReadGuid(ref aReader);
 
             return _recordsContainer.CreateRecord(
@@ -67,6 +70,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
                 recordType,
                 source,
                 target,
+                commission,
                 guid);
         }
     }

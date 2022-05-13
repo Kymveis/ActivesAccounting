@@ -16,7 +16,7 @@ namespace ActivesAccounting.Session.Implementation
         public ISession ActualSession
         {
             get => _actualSession ?? throw new InvalidOperationException("Session is not open.");
-            set => _actualSession = value.ValidateNotNull(nameof(value));
+            set => _actualSession = value;
         }
 
         public FileInfo? File { get; set; }

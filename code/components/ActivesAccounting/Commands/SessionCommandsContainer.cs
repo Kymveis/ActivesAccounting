@@ -18,11 +18,11 @@ namespace ActivesAccounting.Commands
         private readonly IAppSession _appSession;
 
         public SessionCommandsContainer(IAppSession aAppSession) =>
-            _appSession = aAppSession.ValidateNotNull(nameof(aAppSession));
+            _appSession = aAppSession;
 
         public ICommand CreateCommand(Action aAction)
         {
-            var command = new RelayCommand(aAction.ValidateNotNull(nameof(aAction)), isSessionOpen);
+            var command = new RelayCommand(aAction, isSessionOpen);
             _relayCommands.AddLast(command);
 
             return command;
@@ -30,7 +30,7 @@ namespace ActivesAccounting.Commands
 
         public ICommand CreateAsyncCommand(Func<Task> aAction)
         {
-            var command = new AsyncRelayCommand(aAction.ValidateNotNull(nameof(aAction)), isSessionOpen);
+            var command = new AsyncRelayCommand(aAction, isSessionOpen);
             _asyncRelayCommands.AddLast(command);
 
             return command;

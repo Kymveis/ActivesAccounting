@@ -4,7 +4,7 @@ using Microsoft.Win32;
 
 namespace ActivesAccounting
 {
-    internal static class FileUtils
+    internal static class DialogUtils
     {
         private const string EXTENSION = "aacco";
 

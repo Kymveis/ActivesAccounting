@@ -23,7 +23,7 @@ namespace ActivesAccounting.Core.Serialization.Converters
                 _options = aOptions;
             }
 
-            public void WriteProperty<T>(T aValue, string aName)
+            public void WriteProperty<TProperty>(TProperty aValue, string aName)
             {
                 _writer.WritePropertyName(aName);
                 JsonSerializer.Serialize(_writer, aValue, _options);
@@ -82,10 +82,10 @@ namespace ActivesAccounting.Core.Serialization.Converters
             return aReader.GetGuid();
         }
 
-        protected TValue Read<TValue>(ref Utf8JsonReader aReader, string aPropertyName, JsonSerializerOptions aOptions)
+        protected TValue Read<TValue>(ref Utf8JsonReader aReader, string aPropertyName, JsonSerializerOptions aOptions, bool aAllowNull = false)
         {
             validatePropertyName(ref aReader, aPropertyName);
-            return JsonSerializer.Deserialize<TValue>(ref aReader, aOptions) ?? throw createReadNullException();
+            return JsonSerializer.Deserialize<TValue>(ref aReader, aOptions) ?? (aAllowNull ? default! : throw createReadNullException());
         }
 
         private static void validatePropertyName(ref Utf8JsonReader aReader, string aPropertyName)

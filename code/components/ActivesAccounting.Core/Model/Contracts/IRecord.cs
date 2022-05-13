@@ -10,5 +10,6 @@ namespace ActivesAccounting.Core.Model.Contracts
         RecordType RecordType { get; }
         IValue Source { get; }
         IValue Target { get; }
+        IValue? Commission { get; }
     }
 }
