@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ActivesAccounting.Core.Model.Contracts;
 
-using ActivesAccounting.Core.Model.Contracts;
+using Humanizer;
 
 namespace ActivesAccounting.ViewModels;
 
@@ -9,7 +9,7 @@ internal sealed class RecordViewModel
     public RecordViewModel(IRecord aRecord)
     {
         Date = aRecord.DateTime.ToString("dd MMM yyyy");
-        Type = aRecord.RecordType.ToString();
+        Type = aRecord.RecordType.Humanize(LetterCasing.Sentence);
 
         SourceValue = printValue(aRecord.Source);
         SourcePlatform = printPlatform(aRecord.Source.Platform);
@@ -29,5 +29,7 @@ internal sealed class RecordViewModel
 
     private static string printValue(IValue aValue) => $"{aValue.Count:N} {printCurrency(aValue.Currency)}";
     private static string printPlatform(IPlatform aPlatform) => aPlatform.Name;
-    private static string printCurrency(ICurrency aCurrency) => $"{aCurrency.Name} ({aCurrency.Type})";
+
+    private static string printCurrency(ICurrency aCurrency) =>
+        $"{aCurrency.Name} ({aCurrency.Type.Humanize(LetterCasing.Sentence)})";
 }

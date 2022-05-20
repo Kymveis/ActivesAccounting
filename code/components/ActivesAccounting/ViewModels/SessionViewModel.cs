@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +7,6 @@ using System.Windows.Input;
 using ActivesAccounting.Commands;
 using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
-using ActivesAccounting.Core.Model.Enums;
 using ActivesAccounting.Core.Serialization.Contracts;
 using ActivesAccounting.Core.Utils;
 using ActivesAccounting.Session.Implementation;
@@ -70,15 +67,17 @@ internal sealed class SessionViewModel : ObservableObject
 
         async Task openSession()
         {
-            if (DialogUtils.TryOpenFile(out var file))
+            if (!DialogUtils.TryOpenFile(out var file))
             {
-                _session.File = file!;
-                await using var stream = _session.File.OpenRead();
-                clearContainers();
-                setSession(
-                    await _sessionSerializer.DeserializeAsync(stream, CancellationToken.None),
-                    sessionCommandsContainer);
+                return;
             }
+
+            _session.File = file;
+            await using var stream = _session.File.OpenRead();
+            clearContainers();
+            setSession(
+                await _sessionSerializer.DeserializeAsync(stream, CancellationToken.None),
+                sessionCommandsContainer);
         }
 
         async Task saveSession()
@@ -90,7 +89,7 @@ internal sealed class SessionViewModel : ObservableObject
                     return;
                 }
 
-                _session.File = file!;
+                _session.File = file;
             }
 
             _session.File.Delete();
@@ -104,8 +103,13 @@ internal sealed class SessionViewModel : ObservableObject
 
         void addRecord()
         {
-            var record = createFakeRecord();
-            RecordViewModels.Add(new RecordViewModel(record));
+            var addRecordWindow = new AddRecordWindow(_platformsContainer, _currenciesContainer, _recordsContainer, _valueFactory);
+            addRecordWindow.ShowDialog();
+
+            if (addRecordWindow.CreatedRecord is not null)
+            {
+                RecordViewModels.Add(new RecordViewModel(addRecordWindow.CreatedRecord));
+            }
         }
     }
 
@@ -116,19 +120,6 @@ internal sealed class SessionViewModel : ObservableObject
     public ICommand AddRecord { get; }
 
     public ObservableCollection<RecordViewModel> RecordViewModels { get; } = new();
-
-    private IRecord createFakeRecord() =>
-        _recordsContainer.CreateRecord(
-            DateTime.Today,
-            RecordType.Transfer,
-            _valueFactory.CreateValue(
-                _session.ActualSession.Platforms.FirstOrDefault()
-                ?? _platformsContainer.CreatePlatform("HODL"),
-                _session.ActualSession.Currencies.FirstOrDefault()
-                ?? _currenciesContainer.CreateCurrency("BITOK", CurrencyType.Crypto),
-                1),
-            _valueFactory.CreateValue(_session.ActualSession.Platforms.First(),
-                _session.ActualSession.Currencies.First(), 1));
 
     private void setSession(ISession aSession, SessionCommandsContainer aSessionCommandsContainer)
     {

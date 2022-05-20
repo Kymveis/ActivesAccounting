@@ -1,6 +1,8 @@
-﻿namespace ActivesAccounting.Core.Model.Contracts;
+﻿using System;
 
-public interface IValue
+namespace ActivesAccounting.Core.Model.Contracts;
+
+public interface IValue : IEquatable<IValue>
 {
     ICurrency Currency { get; }
     decimal Count { get; }

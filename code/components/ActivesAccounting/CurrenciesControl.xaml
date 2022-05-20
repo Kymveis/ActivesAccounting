@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="ActivesAccounting.CurrenciesControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mainPath="clr-namespace:ActivesAccounting.ViewModels"
+             d:DataContext="{d:DesignInstance mainPath:CurrenciesViewModel, IsDesignTimeCreatable = False}"
+             mc:Ignorable="d">
+    <StackPanel Orientation="Horizontal">
+        <ComboBox
+            Width="100"
+            IsEditable="True"
+            DisplayMemberPath="Name"
+            ItemsSource="{Binding Currencies}"
+            SelectedItem="{Binding SelectedCurrency}">
+        </ComboBox>
+        <Button Content="Create currency"
+                Margin="3 0 0 0"
+                Command="{Binding CreateCurrency}" />
+    </StackPanel>
+</UserControl>

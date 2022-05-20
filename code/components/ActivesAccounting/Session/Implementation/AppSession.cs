@@ -2,7 +2,6 @@
 using System.IO;
 
 using ActivesAccounting.Core.Model.Contracts;
-using ActivesAccounting.Core.Utils;
 using ActivesAccounting.Session.Contracts;
 
 namespace ActivesAccounting.Session.Implementation;
@@ -15,9 +14,11 @@ internal sealed class AppSession : IAppSession
 
     public ISession ActualSession
     {
-        get => _actualSession ?? throw new InvalidOperationException("Session is not open.");
+        get => _actualSession ?? throw createNotOpenException();
         set => _actualSession = value;
     }
 
     public FileInfo? File { get; set; }
+
+    private static InvalidOperationException createNotOpenException() => new("Session is not open.");
 }

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Windows;
 
 using Microsoft.Win32;
 
@@ -8,13 +10,19 @@ internal static class DialogUtils
 {
     private const string EXTENSION = "aacco";
 
-    public static bool TryOpenFile(out FileInfo? aFile) =>
+    public static bool TryOpenFile([MaybeNullWhen(false)] out FileInfo aFile) =>
         tryGetDialogFile(new OpenFileDialog {CheckFileExists = true}, out aFile);
 
-    public static bool TrySaveFile(out FileInfo? aFile) =>
+    public static bool TrySaveFile([MaybeNullWhen(false)] out FileInfo aFile) =>
         tryGetDialogFile(new SaveFileDialog {CheckFileExists = false}, out aFile);
 
-    private static bool tryGetDialogFile(FileDialog aDialog, out FileInfo? aFile)
+    public static bool Ask(string aTitle, string aQuestion) =>
+        MessageBox.Show(aQuestion, aTitle, MessageBoxButton.YesNo, MessageBoxImage.Question) is MessageBoxResult.Yes;
+
+    public static void Error(string aTitle, string aText) =>
+        MessageBox.Show(aText, aTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+
+    private static bool tryGetDialogFile(FileDialog aDialog, [MaybeNullWhen(false)] out FileInfo aFile)
     {
         initializeDialog();
 

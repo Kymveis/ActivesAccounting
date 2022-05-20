@@ -3,10 +3,96 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ActivesAccounting"
+        xmlns:mainPath="clr-namespace:ActivesAccounting.ViewModels"
+        xmlns:activesAccounting="clr-namespace:ActivesAccounting"
+        d:DataContext="{d:DesignInstance mainPath:AddRecordViewModel, IsDesignTimeCreatable = False}"
         mc:Ignorable="d"
-        Title="AddRecordWindow" Height="450" Width="800">
+        Title="Record Editor"
+        Width="300" Height="350"
+        MinWidth="300" MinHeight="350"
+        MaxWidth="400" MaxHeight="350">
+
+    <Window.Resources>
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Date" Style="{StaticResource TextBlockStyle}" />
+            <DatePicker Grid.Row="0" Grid.Column="1" Margin="3" SelectedDateFormat="Long" SelectedDate="{Binding Date}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Type" Style="{StaticResource TextBlockStyle}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="3" ItemsSource="{Binding Types}"
+                      SelectedItem="{Binding SelectedType}" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Source Platform" Style="{StaticResource TextBlockStyle}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{Binding Platforms}"
+                      SelectedItem="{Binding SourcePlatform}"
+                      DisplayMemberPath="Name" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Source Currency" Style="{StaticResource TextBlockStyle}" />
+            <activesAccounting:CurrenciesControl Grid.Row="3" Grid.Column="1" DataContext="{Binding SourceCurrency}" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Source Value" Style="{StaticResource TextBlockStyle}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Margin="3" Text="{Binding SourceValue}" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Target Platform" Style="{StaticResource TextBlockStyle}" />
+            <ComboBox Grid.Row="5" Grid.Column="1" Margin="3" ItemsSource="{Binding Platforms}"
+                      SelectedItem="{Binding TargetPlatform}"
+                      DisplayMemberPath="Name" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Target Currency" Style="{StaticResource TextBlockStyle}" />
+            <ComboBox Grid.Row="6" Grid.Column="1" Margin="3" ItemsSource="{Binding Currencies}"
+                      SelectedItem="{Binding TargetCurrency}"
+                      DisplayMemberPath="Name" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Target Value" Style="{StaticResource TextBlockStyle}" />
+            <TextBox Grid.Row="7" Grid.Column="1" Margin="3" Text="{Binding TargetValue}" />
+        </Grid>
+
+        <StackPanel Grid.Column="1" Grid.Row="2" Margin="10 10 0 10" Orientation="Horizontal"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Content="Cancel"
+                    Margin="0 0 3 0"
+                    Command="{Binding CancelCommand}"
+                    Height="25"
+                    Width="75" />
+            <Button Content="OK"
+                    Margin="0 0 3 0"
+                    Command="{Binding OkCommand}"
+                    Height="25"
+                    Width="75" />
+        </StackPanel>
     </Grid>
 </Window>
