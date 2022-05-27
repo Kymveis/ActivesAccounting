@@ -12,18 +12,21 @@ internal sealed class PlatformsContainer : NamedItemsContainerBase<IPlatform>, I
     private sealed record Platform(string Name, Guid Guid) : IPlatform;
 
     protected override string ItemName => "platform";
-    public IEnumerable<IPlatform> Platforms => Items;
+    protected override IEnumerable<IComparable> GetComparableProperties(IPlatform aItem)
+    {
+        yield return aItem.Name;
+    }
+
+    public IReadOnlySet<IPlatform> Platforms => Items;
 
     public IPlatform CreatePlatform(string aName) => createPlatform(aName, Guid.NewGuid());
 
     IPlatform IPlatformsContainer.CreatePlatform(string aName, Guid aGuid) => createPlatform(aName, aGuid);
 
-    IPlatform IPlatformsContainer.GetPlatform(Guid aGuid) => GetItemByGuid(aGuid);
-
     private IPlatform createPlatform(string aName, Guid aGuid)
     {
         ValidateUniqueName(aName.ValidateNotEmptyOrWhitespace());
 
-        return AddItem(new Platform(aName, aGuid), aGuid);
+        return Add(new Platform(aName, aGuid));
     }
 }

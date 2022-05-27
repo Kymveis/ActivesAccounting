@@ -20,7 +20,17 @@ internal sealed class RecordsContainer : ContainerBase<IRecord>, IRecordsContain
         _pricesContainer = aPricesContainer ?? throw new ArgumentNullException(nameof(aPricesContainer));
 
     protected override string ItemName => "record";
-    public IEnumerable<IRecord> Records => Items.OrderBy(aR => aR.DateTime);
+    public IReadOnlySet<IRecord> Records => Items;
+
+    protected override IEnumerable<IComparable> GetComparableProperties(IRecord aItem)
+    {
+        yield return aItem.DateTime;
+        yield return aItem.RecordType;
+        yield return aItem.Source.Platform.Name;
+        yield return aItem.Source.Currency.Name;
+        yield return aItem.Target.Platform.Name;
+        yield return aItem.Target.Currency.Name;
+    }
 
     public IRecord CreateRecord(
         DateTime aDateTime,
@@ -47,15 +57,14 @@ internal sealed class RecordsContainer : ContainerBase<IRecord>, IRecordsContain
         IValue? aCommission,
         Guid aGuid)
     {
-        var record = AddItem(
+        var record = Add(
             new Record(
                 aDateTime,
                 aRecordType.ValidateEnum(RecordType.Undefined),
                 aSource,
                 aTarget,
                 aCommission,
-                aGuid),
-            aGuid);
+                aGuid));
 
         var exchangedCurrency = aTarget.Currency;
         var unitCurrency = aSource.Currency;

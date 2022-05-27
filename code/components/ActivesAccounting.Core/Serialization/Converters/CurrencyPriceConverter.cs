@@ -65,8 +65,8 @@ internal sealed class CurrencyPriceConverter : ConverterBase<ICurrencyPrice>
     {
         var dateTime = ReadDateTime(ref aReader, Names.DATE_TIME);
         var priceType = PriceTypes.FromName[ReadString(ref aReader, Names.PRICE_TYPE)];
-        var unit = _currenciesContainer.GetCurrency(ReadGuid(ref aReader, Names.UNIT));
-        var exchanged = _currenciesContainer.GetCurrency(ReadGuid(ref aReader, Names.EXCHANGED));
+        var unit = _currenciesContainer.Get(ReadGuid(ref aReader, Names.UNIT));
+        var exchanged = _currenciesContainer.Get(ReadGuid(ref aReader, Names.EXCHANGED));
         var count = ReadDecimal(ref aReader, Names.COUNT);
         var guid = ReadGuid(ref aReader);
 

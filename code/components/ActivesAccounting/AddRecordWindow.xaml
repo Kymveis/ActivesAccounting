@@ -8,9 +8,8 @@
         d:DataContext="{d:DesignInstance mainPath:AddRecordViewModel, IsDesignTimeCreatable = False}"
         mc:Ignorable="d"
         Title="Record Editor"
-        Width="300" Height="350"
-        MinWidth="300" MinHeight="350"
-        MaxWidth="400" MaxHeight="350">
+        Width="350" Height="350"
+        ResizeMode="NoResize">
 
     <Window.Resources>
         <Style x:Key="TextBlockStyle" TargetType="TextBlock">
@@ -57,25 +56,21 @@
                       SelectedItem="{Binding SelectedType}" />
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Source Platform" Style="{StaticResource TextBlockStyle}" />
-            <ComboBox Grid.Row="2" Grid.Column="1" Margin="3" ItemsSource="{Binding Platforms}"
-                      SelectedItem="{Binding SourcePlatform}"
-                      DisplayMemberPath="Name" />
+            <activesAccounting:NamedItemsControl Grid.Row="2" Grid.Column="1" 
+                                                 DataContext="{Binding SourcePlatformViewModel}" 
+                                                 Margin="3" />
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Source Currency" Style="{StaticResource TextBlockStyle}" />
-            <activesAccounting:CurrenciesControl Grid.Row="3" Grid.Column="1" DataContext="{Binding SourceCurrency}" />
+            <activesAccounting:NamedItemsControl  DataContext="{Binding SourceCurrencyViewModel}" Grid.Row="3" Grid.Column="1" Margin="3" />
 
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Source Value" Style="{StaticResource TextBlockStyle}" />
             <TextBox Grid.Row="4" Grid.Column="1" Margin="3" Text="{Binding SourceValue}" />
 
             <TextBlock Grid.Row="5" Grid.Column="0" Text="Target Platform" Style="{StaticResource TextBlockStyle}" />
-            <ComboBox Grid.Row="5" Grid.Column="1" Margin="3" ItemsSource="{Binding Platforms}"
-                      SelectedItem="{Binding TargetPlatform}"
-                      DisplayMemberPath="Name" />
+            <activesAccounting:NamedItemsControl DataContext="{Binding TargetPlatformViewModel}" Grid.Row="5" Grid.Column="1" Margin="3"/>
 
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Target Currency" Style="{StaticResource TextBlockStyle}" />
-            <ComboBox Grid.Row="6" Grid.Column="1" Margin="3" ItemsSource="{Binding Currencies}"
-                      SelectedItem="{Binding TargetCurrency}"
-                      DisplayMemberPath="Name" />
+            <activesAccounting:NamedItemsControl DataContext="{Binding TargetCurrencyViewModel}" Grid.Row="6" Grid.Column="1" Margin="3" />
 
             <TextBlock Grid.Row="7" Grid.Column="0" Text="Target Value" Style="{StaticResource TextBlockStyle}" />
             <TextBox Grid.Row="7" Grid.Column="1" Margin="3" Text="{Binding TargetValue}" />

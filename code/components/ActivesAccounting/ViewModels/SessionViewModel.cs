@@ -9,6 +9,7 @@ using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Serialization.Contracts;
 using ActivesAccounting.Core.Utils;
+using ActivesAccounting.Model.Implementation;
 using ActivesAccounting.Session.Implementation;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -26,7 +27,6 @@ internal sealed class SessionViewModel : ObservableObject
     private readonly IRecordsContainer _recordsContainer;
     private readonly ISessionFactory _sessionFactory;
     private readonly ISessionSerializer _sessionSerializer;
-    private readonly IValueFactory _valueFactory;
 
     public SessionViewModel(
         IPlatformsContainer aPlatformsContainer,
@@ -43,7 +43,6 @@ internal sealed class SessionViewModel : ObservableObject
         _recordsContainer = aRecordsContainer;
         _sessionFactory = aSessionFactory;
         _sessionSerializer = aSessionSerializer;
-        _valueFactory = aValueFactory;
 
         var sessionCommandsContainer = new SessionCommandsContainer(_session);
 
@@ -103,12 +102,14 @@ internal sealed class SessionViewModel : ObservableObject
 
         void addRecord()
         {
-            var addRecordWindow = new AddRecordWindow(_platformsContainer, _currenciesContainer, _recordsContainer, _valueFactory);
-            addRecordWindow.ShowDialog();
+            var templateFactory = new TemplateFactory(aCurrenciesContainer, aPlatformsContainer, aRecordsContainer,
+                aValueFactory);
+            var addRecordWindow = new AddRecordWindow(_platformsContainer, _currenciesContainer, templateFactory,
+                templateFactory, templateFactory);
 
-            if (addRecordWindow.CreatedRecord is not null)
+            if (addRecordWindow.ShowWindow(out var record, out var index))
             {
-                RecordViewModels.Add(new RecordViewModel(addRecordWindow.CreatedRecord));
+                RecordViewModels.Insert(index!.Value, new RecordViewModel(record!));
             }
         }
     }

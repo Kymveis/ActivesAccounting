@@ -30,8 +30,13 @@ internal sealed class PricesContainer : ContainerBase<ICurrencyPrice>, IPricesCo
         }
     }
 
-    public IEnumerable<ICurrencyPrice> Prices => Items;
+    public IReadOnlySet<ICurrencyPrice> Prices => Items;
     protected override string ItemName => "price";
+    protected override IEnumerable<IComparable> GetComparableProperties(ICurrencyPrice aItem)
+    {
+        yield return aItem.DateTime;
+        yield return aItem.Type;
+    }
 
     public bool TryGetPrice(
         ICurrency aExchanged,
@@ -69,8 +74,6 @@ internal sealed class PricesContainer : ContainerBase<ICurrencyPrice>, IPricesCo
         Guid aGuid) =>
         createPrice(aExchanged, aUnit, aCount, aType, aDateTime, aGuid);
 
-    ICurrencyPrice IPricesContainer.GetPrice(Guid aPriceGuid) => GetItemByGuid(aPriceGuid);
-
     private ICurrencyPrice createPrice(
         ICurrency aExchanged,
         ICurrency aUnit,
@@ -78,12 +81,12 @@ internal sealed class PricesContainer : ContainerBase<ICurrencyPrice>, IPricesCo
         PriceType aType,
         DateTime aDateTime,
         Guid aGuid) =>
-        AddItem(
+        Add(
             new Price(
                 aExchanged,
                 aUnit,
                 aCount.ValidateMoreThanZero(),
                 aType.ValidateEnum(PriceType.Undefined),
                 aDateTime,
-                aGuid), aGuid);
+                aGuid));
 }

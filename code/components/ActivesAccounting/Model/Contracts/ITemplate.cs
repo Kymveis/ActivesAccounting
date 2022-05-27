@@ -1,7 +1,10 @@
-﻿namespace ActivesAccounting.Model.Contracts;
+﻿using System.Collections.Generic;
 
-internal interface ITemplate<out TItem>
+namespace ActivesAccounting.Model.Contracts;
+
+public interface ITemplate<TItem>
 {
-    bool HasDuplicate { get; }
-    TItem ToItem();
+    bool IsDuplicate { get; }
+    IReadOnlyCollection<string> CollectErrors();
+    (TItem Item, int Index) ToItem();
 }

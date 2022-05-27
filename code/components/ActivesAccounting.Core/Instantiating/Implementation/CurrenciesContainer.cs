@@ -13,18 +13,23 @@ internal sealed class CurrenciesContainer : NamedItemsContainerBase<ICurrency>, 
     private record Currency(string Name, CurrencyType Type, Guid Guid) : ICurrency;
 
     protected override string ItemName => "currency";
+    protected override IEnumerable<IComparable> GetComparableProperties(ICurrency aItem)
+    {
+        yield return aItem.Type;
+        yield return aItem.Name;
+    }
 
-    public IEnumerable<ICurrency> Currencies => Items;
+    public IReadOnlySet<ICurrency> Currencies => Items;
 
     public ICurrency CreateCurrency(string aName, CurrencyType aType) => createCurrency(aName, aType, Guid.NewGuid());
 
-    ICurrency ICurrenciesContainer.CreateCurrency(string aName, CurrencyType aType, Guid aGuid) => createCurrency(aName, aType, aGuid);
-    ICurrency ICurrenciesContainer.GetCurrency(Guid aCurrencyGuid) => GetItemByGuid(aCurrencyGuid);
+    ICurrency ICurrenciesContainer.CreateCurrency(string aName, CurrencyType aType, Guid aGuid) =>
+        createCurrency(aName, aType, aGuid);
 
     private ICurrency createCurrency(string aName, CurrencyType aType, Guid aGuid)
     {
         ValidateUniqueName(aName.ValidateNotEmptyOrWhitespace());
 
-        return AddItem(new Currency(aName, aType.ValidateEnum(CurrencyType.Undefined), aGuid), aGuid);
+        return Add(new Currency(aName, aType.ValidateEnum(CurrencyType.Undefined), aGuid));
     }
 }

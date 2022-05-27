@@ -48,9 +48,9 @@ using System.Windows.Controls;
 
 namespace ActivesAccounting;
 
-public partial class CurrenciesControl : UserControl
+public partial class NamedItemsControl : UserControl
 {
-    public CurrenciesControl()
+    public NamedItemsControl()
     {
         InitializeComponent();
     }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
+using System.Collections.Specialized;
 using System.Linq;
 
-using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Model.Enums;
 using ActivesAccounting.Model.Contracts;
@@ -13,41 +11,24 @@ namespace ActivesAccounting.ViewModels;
 
 internal sealed class AddRecordViewModel : AddItemViewModelBase<IRecord>
 {
-    private sealed record RecordTemplate( IRecordsContainer RecordsContainer,
-        DateTime Date, RecordType Type, IValue SourceValue, IValue TargetValue) : ITemplate<IRecord>
-    {
-        public bool HasDuplicate => RecordsContainer
-            .Records
-            .Any(aR =>
-                aR.DateTime.Equals(Date)
-                && aR.RecordType.Equals(Type)
-                && aR.Source.Equals(SourceValue)
-                && aR.Target.Equals(TargetValue));
-
-        public IRecord ToItem() => RecordsContainer.CreateRecord(Date, Type, SourceValue, SourceValue);
-    }
-
-    private readonly IRecordsContainer _recordsContainer;
-    private readonly IValueFactory _valueFactory;
-    private RecordType _selectedType;
-    private IPlatform? _sourcePlatform;
-    private IPlatform? _targetPlatform;
-    private ICurrency? _sourceCurrency;
-    private ICurrency? _targetCurrency;
-    private string? _sourceValue;
-    private string? _targetValue;
+    private readonly IRecordTemplate _template;
 
     public AddRecordViewModel(
-        IPlatformsContainer aPlatformsContainer,
-        ICurrenciesContainer aCurrenciesContainer,
-        IRecordsContainer aRecordsContainer,
-        IValueFactory aValueFactory,
+        IRecordTemplateFactory aRecordTemplateFactory,
+        NamedItemsViewModel<IPlatform> aSourcePlatformViewModel,
+        NamedItemsViewModel<IPlatform> aTargetPlatformViewModel,
+        NamedItemsViewModel<ICurrency> aSourceCurrencyViewModel,
+        NamedItemsViewModel<ICurrency> aTargetCurrencyViewModel,
         Action aCloseAction,
-        Action<IRecord> aSetNewRecordAction)
+        Action<IRecord, int> aSetNewRecordAction)
         : base(aCloseAction, aSetNewRecordAction, true, "Record")
     {
-        _recordsContainer = aRecordsContainer;
-        _valueFactory = aValueFactory;
+        _template = aRecordTemplateFactory.Create();
+        SourcePlatformViewModel = aSourcePlatformViewModel;
+        TargetPlatformViewModel = aTargetPlatformViewModel;
+        SourceCurrencyViewModel = aSourceCurrencyViewModel;
+        TargetCurrencyViewModel = aTargetCurrencyViewModel;
+
         Types = new ObservableCollection<RecordType>(new[]
         {
             RecordType.Deposit,
@@ -55,153 +36,83 @@ internal sealed class AddRecordViewModel : AddItemViewModelBase<IRecord>
             RecordType.Withdrawal
         });
 
+        Date = DateTime.Today;
         SelectedType = Types[0];
 
-        Platforms = new ObservableCollection<IPlatform>(aPlatformsContainer.Platforms);
-        Currencies = new ObservableCollection<ICurrency>(aCurrenciesContainer.Currencies);
-        SourceCurrency = new CurrenciesViewModel(aCurrenciesContainer);
+        SourcePlatformViewModel.PropertyChanged += (_, _) =>
+            _template.SourcePlatform = SourcePlatformViewModel.SelectedItem;
+
+        SourceCurrencyViewModel.PropertyChanged += (_, _) =>
+            _template.SourceCurrency = SourceCurrencyViewModel.SelectedItem;
+
+        TargetPlatformViewModel.PropertyChanged += (_, _) =>
+            _template.TargetPlatform = TargetPlatformViewModel.SelectedItem;
+
+        TargetCurrencyViewModel.PropertyChanged += (_, _) =>
+            _template.TargetCurrency = TargetCurrencyViewModel.SelectedItem;
+
+        pairItemCollectionViews(SourcePlatformViewModel, TargetPlatformViewModel);
+        pairItemCollectionViews(SourceCurrencyViewModel, TargetCurrencyViewModel);
+
+        void pairItemCollectionViews<T>(NamedItemsViewModel<T> aSource, NamedItemsViewModel<T> aTarget)
+            where T : INamedItem
+        {
+            pairItemCollections(aSource, aTarget);
+            pairItemCollections(aTarget, aSource);
+
+            void pairItemCollections(NamedItemsViewModel<T> aLeft, NamedItemsViewModel<T> aRight) =>
+                aLeft.Items.CollectionChanged += (_, aArgs) =>
+                {
+                    if (aArgs.Action is not NotifyCollectionChangedAction.Add)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(aArgs), aArgs, default);
+                    }
+                    
+                    var newItem = aArgs.NewItems!.Cast<T>().Single();
+                    var targetIndex = aArgs.NewStartingIndex;
+                    var collectionToUpdate = aRight.Items;
+                    
+                    if (collectionToUpdate.Count <= targetIndex || !collectionToUpdate[targetIndex].Equals(newItem))
+                    {
+                        collectionToUpdate.Add(newItem);
+                    }
+                };
+        }
     }
 
-    public DateTime Date { get; set; } = DateTime.Today;
+    protected override ITemplate<IRecord> Template => _template;
 
-    #region Types
+    public NamedItemsViewModel<IPlatform> SourcePlatformViewModel { get; }
+
+    public NamedItemsViewModel<IPlatform> TargetPlatformViewModel { get; }
+
+    public NamedItemsViewModel<ICurrency> SourceCurrencyViewModel { get; }
+
+    public NamedItemsViewModel<ICurrency> TargetCurrencyViewModel { get; }
 
     public ObservableCollection<RecordType> Types { get; }
 
-    public RecordType SelectedType
+    public DateTime? Date
     {
-        get => _selectedType;
-        set
-        {
-            _selectedType = value;
-            OnPropertyChanged();
-        }
+        get => _template.DateTime;
+        set => _template.DateTime = value;
     }
 
-    #endregion
-
-    #region Platforms
-
-    public ObservableCollection<IPlatform> Platforms { get; }
-
-    public IPlatform? SourcePlatform
+    public RecordType? SelectedType
     {
-        get => _sourcePlatform;
-        set
-        {
-            _sourcePlatform = value;
-            OnPropertyChanged();
-        }
+        get => _template.Type;
+        set => _template.Type = value;
     }
-
-    public IPlatform? TargetPlatform
-    {
-        get => _targetPlatform;
-        set
-        {
-            _targetPlatform = value;
-            OnPropertyChanged();
-        }
-    }
-
-    #endregion
-
-    #region Currencies
-
-    public CurrenciesViewModel SourceCurrency { get; }
-
-    public ObservableCollection<ICurrency> Currencies { get; }
-
-    public ICurrency? TargetCurrency
-    {
-        get => _targetCurrency;
-        set
-        {
-            _targetCurrency = value;
-            OnPropertyChanged();
-        }
-    }
-
-    #endregion
-
-    #region Values
 
     public string? SourceValue
     {
-        get => _sourceValue;
-        set
-        {
-            _sourceValue = value;
-            OnPropertyChanged();
-        }
+        get => _template.SourceValue;
+        set => _template.SourceValue = value;
     }
 
     public string? TargetValue
     {
-        get => _targetValue;
-        set
-        {
-            _targetValue = value;
-            OnPropertyChanged();
-        }
-    }
-
-    #endregion
-
-    protected override ITemplate<IRecord> ValidateFields(ICollection<string> aErrors)
-    {
-        validateValues(
-            SourcePlatform,
-            default,
-            SourceValue,
-            "Source",
-            out var sourceCount);
-
-        validateValues(
-            TargetPlatform,
-            TargetCurrency,
-            TargetValue,
-            "Target",
-            out var targetCount);
-
-        return aErrors.Any()
-            ? CreateInvalidTemplate()
-            : new RecordTemplate(_recordsContainer, Date, SelectedType,
-                _valueFactory.CreateValue(SourcePlatform!, default!, sourceCount),
-                _valueFactory.CreateValue(TargetPlatform!, TargetCurrency!, targetCount));
-
-        void validateValues(
-            IPlatform? aPlatform,
-            ICurrency? aCurrency,
-            string? aValue,
-            string aDescription,
-            out decimal aParsedValue)
-        {
-            if (aPlatform is null)
-            {
-                aErrors.Add($"{aDescription} platform is not selected.");
-            }
-
-            if (aCurrency is null)
-            {
-                aErrors.Add($"{aDescription} currency is not selected.");
-            }
-
-            var parsedValue = default(decimal);
-            if (aValue is null)
-            {
-                aErrors.Add($"{aDescription} value is not entered.");
-            }
-            else if (!tryParseValue(CultureInfo.InvariantCulture, out parsedValue)
-                     && !tryParseValue(CultureInfo.CurrentCulture, out parsedValue))
-            {
-                aErrors.Add($"{aDescription} value is not a number.");
-            }
-
-            aParsedValue = parsedValue;
-
-            bool tryParseValue(IFormatProvider aCultureInfo, out decimal aCurrentCultureValue) =>
-                decimal.TryParse(aValue, NumberStyles.Any, aCultureInfo, out aCurrentCultureValue);
-        }
+        get => _template.TargetValue;
+        set => _template.TargetValue = value;
     }
 }

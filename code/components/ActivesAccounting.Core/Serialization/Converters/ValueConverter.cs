@@ -1,7 +1,9 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 
 using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
+using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
@@ -38,8 +40,8 @@ internal sealed class ValueConverter : ConverterBase<IValue>
 
     protected override IValue Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
     {
-        var platform = _platformsContainer.GetPlatform(ReadGuid(ref aReader, Names.PLATFORM));
-        var currency = _currenciesContainer.GetCurrency(ReadGuid(ref aReader, Names.CURRENCY));
+        var platform = _platformsContainer.Get(ReadGuid(ref aReader, Names.PLATFORM));
+        var currency = _currenciesContainer.Get(ReadGuid(ref aReader, Names.CURRENCY));
         var count = ReadDecimal(ref aReader, Names.COUNT);
 
         return _valueFactory.CreateValue(platform, currency, count);

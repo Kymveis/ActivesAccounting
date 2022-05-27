@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 using ActivesAccounting.Core.Instantiating.Contracts;
 using ActivesAccounting.Core.Model.Contracts;
+using ActivesAccounting.Model.Contracts;
 using ActivesAccounting.ViewModels;
 
 namespace ActivesAccounting;
@@ -21,23 +10,58 @@ namespace ActivesAccounting;
 /// <summary>
 /// Interaction logic for AddRecordWindow.xaml
 /// </summary>
-public partial class AddRecordWindow : Window
+public partial class AddRecordWindow : Window, IAddItemWindow<IRecord>
 {
+    private IRecord? _record;
+    private int? _index;
+    
     public AddRecordWindow(
         IPlatformsContainer aPlatformsContainer,
         ICurrenciesContainer aCurrenciesContainer,
-        IRecordsContainer aRecordsContainer,
-        IValueFactory aValueFactory)
+        IPlatformTemplateFactory aPlatformTemplateFactory,
+        ICurrencyTemplateFactory aCurrencyTemplateFactory,
+        IRecordTemplateFactory aRecordTemplateFactory)
     {
         InitializeComponent();
+
+        var sourcePlatformViewModel = createPlatformsViewModel(aPlatformsContainer, aPlatformTemplateFactory);
+        var targetPlatformViewModel = createPlatformsViewModel(aPlatformsContainer, aPlatformTemplateFactory);
+        var sourceCurrencyViewModel = createCurrenciesViewModel(aCurrenciesContainer, aCurrencyTemplateFactory);
+        var targetCurrencyViewModel = createCurrenciesViewModel(aCurrenciesContainer, aCurrencyTemplateFactory);
+        
         DataContext = new AddRecordViewModel(
-            aPlatformsContainer,
-            aCurrenciesContainer,
-            aRecordsContainer,
-            aValueFactory,
+            aRecordTemplateFactory,
+            sourcePlatformViewModel,
+            targetPlatformViewModel,
+            sourceCurrencyViewModel,
+            targetCurrencyViewModel,
             Close,
-            aR => CreatedRecord = aR);
+            (aR, aI) =>
+            {
+                _record = aR;
+                _index = aI;
+            });
     }
-    
-    public IRecord? CreatedRecord { get; private set; }
+
+    public bool ShowWindow(out IRecord? aItem, out int? aIndex)
+    {
+        ShowDialog();
+        aItem = _record;
+        aIndex = _index;
+        return _record is not null;
+    }
+
+    private static NamedItemsViewModel<IPlatform> createPlatformsViewModel(
+        IPlatformsContainer aPlatformsContainer,
+        IPlatformTemplateFactory aPlatformTemplateFactory) => new(
+        aPlatformsContainer.Platforms,
+        () => new AddPlatformWindow(aPlatformTemplateFactory),
+        "Platform");
+
+    private static NamedItemsViewModel<ICurrency> createCurrenciesViewModel(
+        ICurrenciesContainer aCurrenciesContainer,
+        ICurrencyTemplateFactory aCurrencyTemplateFactory) => new(
+        aCurrenciesContainer.Currencies,
+        () => new AddCurrencyWindow(aCurrencyTemplateFactory),
+        "Currency");
 }

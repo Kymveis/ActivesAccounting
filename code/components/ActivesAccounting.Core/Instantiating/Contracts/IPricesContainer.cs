@@ -6,9 +6,9 @@ using ActivesAccounting.Core.Model.Enums;
 
 namespace ActivesAccounting.Core.Instantiating.Contracts;
 
-public interface IPricesContainer : IContainer
+public interface IPricesContainer : IContainer<ICurrencyPrice>
 {
-    IEnumerable<ICurrencyPrice> Prices { get; }
+    IReadOnlySet<ICurrencyPrice> Prices { get; }
 
     bool TryGetPrice(
         ICurrency aExchanged,
@@ -30,6 +30,4 @@ public interface IPricesContainer : IContainer
         PriceType aType,
         DateTime aDateTime,
         Guid aGuid);
-
-    internal ICurrencyPrice GetPrice(Guid aPriceGuid);
 }

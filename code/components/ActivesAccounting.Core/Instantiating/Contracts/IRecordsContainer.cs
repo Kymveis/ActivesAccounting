@@ -6,9 +6,9 @@ using ActivesAccounting.Core.Model.Enums;
 
 namespace ActivesAccounting.Core.Instantiating.Contracts;
 
-public interface IRecordsContainer : IContainer
+public interface IRecordsContainer : IContainer<IRecord>
 {
-    IEnumerable<IRecord> Records { get; }
+    IReadOnlySet<IRecord> Records { get; }
 
     IRecord CreateRecord(
         DateTime aDateTime,
