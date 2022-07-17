@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using ActivesAccounting.Core.Model.Contracts;
+using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
@@ -36,7 +37,7 @@ internal abstract class ConverterBase<T> : JsonConverter<T>
     }
 
     protected abstract void Write(SerializingSession aSession, T aValue);
-    protected abstract T Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions);
+    protected abstract IResult<T> Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions);
 
     public override void Write(Utf8JsonWriter aWriter, T aValue, JsonSerializerOptions aOptions)
     {
@@ -53,9 +54,16 @@ internal abstract class ConverterBase<T> : JsonConverter<T>
                 $"The given type is {aTypeToConvert} when expected was {typeof(T)}.");
         }
 
-        var read = Read(ref aReader, aOptions);
+        var result = Read(ref aReader, aOptions);
         moveReader(ref aReader);
-        return read;
+
+        if (result.Valid)
+        {
+            return result.Value;
+        }
+
+        throw new InvalidDataException(
+            $"Cannot read {typeof(T).Name} instance due to errors:\n{result.Errors.JoinStrings()}");
     }
 
     protected string ReadString(ref Utf8JsonReader aReader, string aPropertyName)
@@ -82,10 +90,12 @@ internal abstract class ConverterBase<T> : JsonConverter<T>
         return aReader.GetGuid();
     }
 
-    protected TValue Read<TValue>(ref Utf8JsonReader aReader, string aPropertyName, JsonSerializerOptions aOptions, bool aAllowNull = false)
+    protected TValue Read<TValue>(ref Utf8JsonReader aReader, string aPropertyName, JsonSerializerOptions aOptions,
+        bool aAllowNull = false)
     {
         validatePropertyName(ref aReader, aPropertyName);
-        return JsonSerializer.Deserialize<TValue>(ref aReader, aOptions) ?? (aAllowNull ? default! : throw createReadNullException());
+        return JsonSerializer.Deserialize<TValue>(ref aReader, aOptions) ??
+            (aAllowNull ? default! : throw createReadNullException());
     }
 
     private static void validatePropertyName(ref Utf8JsonReader aReader, string aPropertyName)

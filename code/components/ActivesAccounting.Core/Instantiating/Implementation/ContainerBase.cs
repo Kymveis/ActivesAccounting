@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,8 +48,17 @@ internal abstract class ContainerBase<T> : IContainer<T> where T : IUniqueItem
     }
 
     protected abstract string ItemName { get; }
-    protected IReadOnlySet<T> Items => _items;
     protected abstract IEnumerable<IComparable> GetComparableProperties(T aItem);
+
+    public void Add(T aItem)
+    {
+        if (!_items.Add(aItem))
+        {
+            throw Exceptions.AlreadyHasItem(ItemName, aItem.Guid, "Guid");
+        }
+    }
+
+    public bool HasDuplicate(T aItem) => _items.Contains(aItem);
 
     public void Remove(T aItem)
     {
@@ -58,14 +68,12 @@ internal abstract class ContainerBase<T> : IContainer<T> where T : IUniqueItem
         }
     }
 
-    public void Clear() => _items.Clear();
+    void IContainer<T>.Clear() => _items.Clear();
 
     T IContainer<T>.Get(Guid aGuid) =>
         _items.FirstOrDefault(aI => aI.Guid.Equals(aGuid))
         ?? throw Exceptions.NotHasItem(ItemName, aGuid, "Guid");
 
-    protected T Add(T aItem) =>
-        _items.Add(aItem)
-            ? aItem
-            : throw Exceptions.AlreadyHasItem(ItemName, aItem.Guid, "Guid");
+    public IEnumerator<T> GetEnumerator() => _items.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

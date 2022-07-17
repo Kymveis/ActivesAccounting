@@ -2,15 +2,13 @@
 using System.Text.Json;
 
 using ActivesAccounting.Core.Instantiating.Contracts;
+using ActivesAccounting.Core.Instantiating.Contracts.Builders;
 using ActivesAccounting.Core.Model.Contracts;
-using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
 internal sealed class ValueConverter : ConverterBase<IValue>
 {
-    private readonly IPlatformsContainer _platformsContainer;
-
     private static class Names
     {
         public const string PLATFORM = "Platform";
@@ -18,17 +16,19 @@ internal sealed class ValueConverter : ConverterBase<IValue>
         public const string COUNT = "Count";
     }
 
-    private readonly ICurrenciesContainer _currenciesContainer;
-    private readonly IValueFactory _valueFactory;
+    private readonly IBuilderFactory<IValueBuilder> _valueBuilderFactory;
+    private IContainer<IPlatform>? _platformsContainer;
+    private IContainer<ICurrency>? _currenciesContainer;
 
-    public ValueConverter(
-        ICurrenciesContainer aCurrenciesContainer,
-        IPlatformsContainer aPlatformsContainer,
-        IValueFactory aValueFactory)
+    public ValueConverter(IBuilderFactory<IValueBuilder> aValueBuilderFactory)
     {
-        _currenciesContainer = aCurrenciesContainer;
+        _valueBuilderFactory = aValueBuilderFactory;
+    }
+
+    public void SetContainers(IContainer<IPlatform> aPlatformsContainer, IContainer<ICurrency>? aCurrenciesContainer)
+    {
         _platformsContainer = aPlatformsContainer;
-        _valueFactory = aValueFactory;
+        _currenciesContainer = aCurrenciesContainer;
     }
 
     protected override void Write(SerializingSession aSession, IValue aValue)
@@ -38,12 +38,19 @@ internal sealed class ValueConverter : ConverterBase<IValue>
         aSession.WriteProperty(aValue.Count, Names.COUNT);
     }
 
-    protected override IValue Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
+    protected override IResult<IValue> Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
     {
-        var platform = _platformsContainer.Get(ReadGuid(ref aReader, Names.PLATFORM));
-        var currency = _currenciesContainer.Get(ReadGuid(ref aReader, Names.CURRENCY));
-        var count = ReadDecimal(ref aReader, Names.COUNT);
+        if (_platformsContainer is null || _currenciesContainer is null)
+        {
+            throw new InvalidOperationException("Containers aren't set.");
+        }
 
-        return _valueFactory.CreateValue(platform, currency, count);
+        var builder = _valueBuilderFactory.Create();
+
+        builder.SetPlatform(_platformsContainer.Get(ReadGuid(ref aReader, Names.PLATFORM)));
+        builder.SetCurrency(_currenciesContainer.Get(ReadGuid(ref aReader, Names.CURRENCY)));
+        builder.SetCount(ReadDecimal(ref aReader, Names.COUNT));
+
+        return builder.Build();
     }
 }

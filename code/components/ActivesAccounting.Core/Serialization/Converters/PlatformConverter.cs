@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
 
-using ActivesAccounting.Core.Instantiating.Contracts;
+using ActivesAccounting.Core.Instantiating.Contracts.Builders;
 using ActivesAccounting.Core.Model.Contracts;
-using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
@@ -13,10 +12,12 @@ internal sealed class PlatformConverter : ConverterBase<IPlatform>
         public const string NAME = "Name";
     }
 
-    private readonly IPlatformsContainer _platformsContainer;
+    private readonly IBuilderFactory<IPlatformBuilder> _platformBuilderFactory;
 
-    public PlatformConverter(IPlatformsContainer aPlatformsContainer) => 
-        _platformsContainer = aPlatformsContainer;
+    public PlatformConverter(IBuilderFactory<IPlatformBuilder> aPlatformBuilderFactory)
+    {
+        _platformBuilderFactory = aPlatformBuilderFactory;
+    }
 
     protected override void Write(SerializingSession aSession, IPlatform aValue)
     {
@@ -24,11 +25,13 @@ internal sealed class PlatformConverter : ConverterBase<IPlatform>
         aSession.WriteGuid(aValue);
     }
 
-    protected override IPlatform Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
+    protected override IResult<IPlatform> Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
     {
-        var name = ReadString(ref aReader, Names.NAME);
-        var guid = ReadGuid(ref aReader);
+        var builder = _platformBuilderFactory.Create();
 
-        return _platformsContainer.CreatePlatform(name, guid);
+        builder.SetName(ReadString(ref aReader, Names.NAME));
+        builder.SetGuid(ReadGuid(ref aReader));
+
+        return builder.Build();
     }
 }

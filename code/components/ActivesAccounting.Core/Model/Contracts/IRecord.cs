@@ -10,5 +10,4 @@ public interface IRecord : IUniqueItem
     RecordType RecordType { get; }
     IValue Source { get; }
     IValue Target { get; }
-    IValue? Commission { get; }
 }

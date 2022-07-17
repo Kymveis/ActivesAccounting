@@ -2,10 +2,9 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 
-using ActivesAccounting.Core.Instantiating.Contracts;
+using ActivesAccounting.Core.Instantiating.Contracts.Builders;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Model.Enums;
-using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
@@ -38,13 +37,14 @@ internal sealed class RecordConverter : ConverterBase<IRecord>
         public const string RECORD_TYPE = "RecordType";
         public const string SOURCE = "Source";
         public const string TARGET = "Target";
-        public const string COMMISSION = "Commission";
     }
 
-    private readonly IRecordsContainer _recordsContainer;
+    private readonly IBuilderFactory<IRecordBuilder> _recordBuilderFactory;
 
-    public RecordConverter(IRecordsContainer aRecordsContainer) =>
-        _recordsContainer = aRecordsContainer;
+    public RecordConverter(IBuilderFactory<IRecordBuilder> aRecordBuilderFactory)
+    {
+        _recordBuilderFactory = aRecordBuilderFactory;
+    }
 
     protected override void Write(SerializingSession aSession, IRecord aValue)
     {
@@ -52,25 +52,19 @@ internal sealed class RecordConverter : ConverterBase<IRecord>
         aSession.WriteProperty(RecordTypes.ToName[aValue.RecordType], Names.RECORD_TYPE);
         aSession.WriteProperty(aValue.Source, Names.SOURCE);
         aSession.WriteProperty(aValue.Target, Names.TARGET);
-        aSession.WriteProperty(aValue.Commission, Names.COMMISSION);
         aSession.WriteGuid(aValue);
     }
 
-    protected override IRecord Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
+    protected override IResult<IRecord> Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
     {
-        var dateTime = ReadDateTime(ref aReader, Names.DATE_TIME);
-        var recordType = RecordTypes.FromName[ReadString(ref aReader, Names.RECORD_TYPE)];
-        var source = Read<IValue>(ref aReader, Names.SOURCE, aOptions);
-        var target = Read<IValue>(ref aReader, Names.TARGET, aOptions);
-        var commission = Read<IValue>(ref aReader, Names.COMMISSION, aOptions, true);
-        var guid = ReadGuid(ref aReader);
+        var builder = _recordBuilderFactory.Create();
 
-        return _recordsContainer.CreateRecord(
-            dateTime,
-            recordType,
-            source,
-            target,
-            commission,
-            guid);
+        builder.SetDateTime(ReadDateTime(ref aReader, Names.DATE_TIME));
+        builder.SetRecordType(RecordTypes.FromName[ReadString(ref aReader, Names.RECORD_TYPE)]);
+        builder.SetSourceValue(Read<IValue>(ref aReader, Names.SOURCE, aOptions));
+        builder.SetTargetValue(Read<IValue>(ref aReader, Names.TARGET, aOptions));
+        builder.SetGuid(ReadGuid(ref aReader));
+
+        return builder.Build();
     }
 }

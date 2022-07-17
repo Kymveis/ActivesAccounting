@@ -5,11 +5,13 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.1.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageReference Include="NullGuard.Fody" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,10 +2,9 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 
-using ActivesAccounting.Core.Instantiating.Contracts;
+using ActivesAccounting.Core.Instantiating.Contracts.Builders;
 using ActivesAccounting.Core.Model.Contracts;
 using ActivesAccounting.Core.Model.Enums;
-using ActivesAccounting.Core.Utils;
 
 namespace ActivesAccounting.Core.Serialization.Converters;
 
@@ -40,10 +39,12 @@ internal sealed class CurrencyConverter : ConverterBase<ICurrency>
         public const string TYPE = "Type";
     }
 
-    private readonly ICurrenciesContainer _currenciesContainer;
+    private readonly IBuilderFactory<ICurrencyBuilder> _currencyBuilderFactory;
 
-    public CurrencyConverter(ICurrenciesContainer aCurrenciesContainer) => 
-        _currenciesContainer = aCurrenciesContainer;
+    public CurrencyConverter(IBuilderFactory<ICurrencyBuilder> aCurrencyBuilderFactory)
+    {
+        _currencyBuilderFactory = aCurrencyBuilderFactory;
+    }
 
     protected override void Write(SerializingSession aSession, ICurrency aValue)
     {
@@ -52,11 +53,14 @@ internal sealed class CurrencyConverter : ConverterBase<ICurrency>
         aSession.WriteGuid(aValue);
     }
 
-    protected override ICurrency Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
+    protected override IResult<ICurrency> Read(ref Utf8JsonReader aReader, JsonSerializerOptions aOptions)
     {
-        var name = ReadString(ref aReader, Names.NAME);
-        var type = CurrencyTypes.FromName[ReadString(ref aReader, Names.TYPE)];
-        var guid = ReadGuid(ref aReader);
-        return _currenciesContainer.CreateCurrency(name, type, guid);
+        var builder = _currencyBuilderFactory.Create();
+
+        builder.SetName(ReadString(ref aReader, Names.NAME));
+        builder.SetType(CurrencyTypes.FromName[ReadString(ref aReader, Names.TYPE)]);
+        builder.SetGuid(ReadGuid(ref aReader));
+
+        return builder.Build();
     }
 }

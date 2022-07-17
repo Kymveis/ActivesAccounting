@@ -1,0 +1,393 @@
+{
+  "Platforms": [
+    {
+      "Name": "Wallet",
+      "Guid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3"
+    },
+    {
+      "Name": "\u041F\u0440\u043E\u043C\u043F\u0440\u0438\u043B\u0430\u0434",
+      "Guid": "d1983000-9b1c-4441-8824-9bfc5126b53f"
+    },
+    {
+      "Name": "Venus.io",
+      "Guid": "31e3e83e-6805-41a2-a026-e11cc5d22682"
+    },
+    {
+      "Name": "Pancakeswap",
+      "Guid": "34517922-39d2-4eae-9d54-cf2bf74349a6"
+    },
+    {
+      "Name": "Metamask Ether",
+      "Guid": "66cbfc19-d451-43c6-bf6a-e30c2273768e"
+    },
+    {
+      "Name": "Binance",
+      "Guid": "0f905dc5-340e-43e3-9b03-67bf2d336d02"
+    },
+    {
+      "Name": "Reserve",
+      "Guid": "2de08fd8-84d1-4ce1-a5f6-42ee15afb5af"
+    },
+    {
+      "Name": "mono invest",
+      "Guid": "2e44855b-6fed-4b07-8044-5cfb511c2423"
+    },
+    {
+      "Name": "Wotan",
+      "Guid": "82b92351-5eac-481a-9f99-6846a6daab9c"
+    },
+    {
+      "Name": "monobank",
+      "Guid": "6e38f559-745a-4c01-b271-a633d9fdc7fd"
+    }
+  ],
+  "Currencies": [
+    {
+      "Name": "UAH",
+      "Type": "Fiat",
+      "Guid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f"
+    },
+    {
+      "Name": "USD",
+      "Type": "Fiat",
+      "Guid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4"
+    },
+    {
+      "Name": "EUR",
+      "Type": "Fiat",
+      "Guid": "f7be2148-1868-4434-89d4-cfb271e6e135"
+    },
+    {
+      "Name": "BUSD",
+      "Type": "Crypto",
+      "Guid": "aa316918-b6f4-4ddf-a703-76f935c0e302"
+    },
+    {
+      "Name": "USDT",
+      "Type": "Crypto",
+      "Guid": "6860492d-865f-4798-b468-612532b76963"
+    },
+    {
+      "Name": "BTC",
+      "Type": "Crypto",
+      "Guid": "099904c4-a5f2-4ebb-a1c0-b513c707c85a"
+    },
+    {
+      "Name": "ETH",
+      "Type": "Crypto",
+      "Guid": "4fd49387-28d1-4674-8c69-009eb37d1a09"
+    },
+    {
+      "Name": "CAKE",
+      "Type": "Crypto",
+      "Guid": "56ed7ded-e31b-46c2-9441-f2201d6af985"
+    },
+    {
+      "Name": "1INCH",
+      "Type": "Crypto",
+      "Guid": "a445c6b8-72e9-491e-b115-d0c53b2e5c4f"
+    },
+    {
+      "Name": "ATOM",
+      "Type": "Crypto",
+      "Guid": "e78c3929-77fc-4844-80e2-cf36c61e9514"
+    },
+    {
+      "Name": "DOT",
+      "Type": "Crypto",
+      "Guid": "293b3d35-5c63-4721-b7a6-1957021398a4"
+    },
+    {
+      "Name": "SHIB",
+      "Type": "Crypto",
+      "Guid": "3658c5aa-fab8-45c6-bdc3-ef451926de03"
+    },
+    {
+      "Name": "BNB",
+      "Type": "Crypto",
+      "Guid": "20eb9a1d-413c-4a20-9802-9a4ad90baaba"
+    },
+    {
+      "Name": "\u041F\u0440\u043E\u043C\u043F\u0440\u0438\u043B\u0430\u0434",
+      "Type": "Stock",
+      "Guid": "e3f8e3a9-d2e9-4ddf-968f-46175f75767c"
+    },
+    {
+      "Name": "AAPL",
+      "Type": "Stock",
+      "Guid": "7f064071-0f0b-46c0-821e-a808d3ae09a6"
+    },
+    {
+      "Name": "F",
+      "Type": "Stock",
+      "Guid": "3cd80d8e-6534-4116-a940-071db2a5a6fb"
+    },
+    {
+      "Name": "GM",
+      "Type": "Stock",
+      "Guid": "7ab934ce-a712-4cd5-b3ef-16fbecc2689d"
+    },
+    {
+      "Name": "JNJ",
+      "Type": "Stock",
+      "Guid": "10be68d2-87ca-4a11-b40f-617023030f0b"
+    },
+    {
+      "Name": "PFE",
+      "Type": "Stock",
+      "Guid": "f97bb451-70b9-4756-988b-fa06d5f43928"
+    },
+    {
+      "Name": "\u0412\u0456\u0439\u0441\u044C\u043A\u043E\u0432\u0456 \u041E\u0431\u043B\u0456\u0433\u0430\u0446\u0456\u0457 01.03.2023",
+      "Type": "Stock",
+      "Guid": "485f3d17-7502-4f0e-96e8-f8993c6fdd7a"
+    },
+    {
+      "Name": "\u0412\u0456\u0439\u0441\u044C\u043A\u043E\u0432\u0456 \u041E\u0431\u043B\u0456\u0433\u0430\u0446\u0456\u0457 02.11.2022",
+      "Type": "Stock",
+      "Guid": "0e1ba27c-0db5-4903-a4e9-2feb2cfb9faa"
+    }
+  ],
+  "Records": [
+    {
+      "DateTime": "2021-07-09T14:06:22",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 300
+      },
+      "Target": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "099904c4-a5f2-4ebb-a1c0-b513c707c85a",
+        "Count": 0.008667
+      },
+      "Guid": "232729e9-43d4-438b-81d3-7b75a3063563"
+    },
+    {
+      "DateTime": "2021-07-09T15:21:53",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 300
+      },
+      "Target": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "4fd49387-28d1-4674-8c69-009eb37d1a09",
+        "Count": 0.13309
+      },
+      "Guid": "5232278a-adfe-4fab-bb6b-5e53a01a4e33"
+    },
+    {
+      "DateTime": "2021-07-09T15:29:18",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 100
+      },
+      "Target": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "6860492d-865f-4798-b468-612532b76963",
+        "Count": 96.55172413
+      },
+      "Guid": "a76268a8-0376-4011-aa84-3882038e6516"
+    },
+    {
+      "DateTime": "2021-07-10T04:43:32",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 100
+      },
+      "Target": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "20eb9a1d-413c-4a20-9802-9a4ad90baaba",
+        "Count": 0.3067
+      },
+      "Guid": "0bbb828a-a05d-4e7d-b2b9-765f07f25c73"
+    },
+    {
+      "DateTime": "2021-07-27T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f",
+        "Count": 50000
+      },
+      "Target": {
+        "PlatformGuid": "d1983000-9b1c-4441-8824-9bfc5126b53f",
+        "CurrencyGuid": "e3f8e3a9-d2e9-4ddf-968f-46175f75767c",
+        "Count": 1
+      },
+      "Guid": "5a484c93-39d2-40d5-9712-78478dfa5b21"
+    },
+    {
+      "DateTime": "2021-11-02T12:12:30",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f",
+        "Count": 13000
+      },
+      "Target": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "aa316918-b6f4-4ddf-a703-76f935c0e302",
+        "Count": 467.67944142
+      },
+      "Guid": "0629c087-be4d-467f-909c-a36245b2fab7"
+    },
+    {
+      "DateTime": "2022-02-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 36.14
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "3cd80d8e-6534-4116-a940-071db2a5a6fb",
+        "Count": 2
+      },
+      "Guid": "57201bf6-0813-42bc-977c-41cd0b4775e5"
+    },
+    {
+      "DateTime": "2022-02-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 51.07
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "7ab934ce-a712-4cd5-b3ef-16fbecc2689d",
+        "Count": 1
+      },
+      "Guid": "0f9f04d9-83b7-461f-bc1a-4557c59dac80"
+    },
+    {
+      "DateTime": "2022-02-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 172.85
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "10be68d2-87ca-4a11-b40f-617023030f0b",
+        "Count": 1
+      },
+      "Guid": "0ef59331-9a15-4a63-8915-e555a8827f7d"
+    },
+    {
+      "DateTime": "2022-02-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 171.38
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "7f064071-0f0b-46c0-821e-a808d3ae09a6",
+        "Count": 1
+      },
+      "Guid": "c10fba8e-4f66-4030-be0f-938f653914e3"
+    },
+    {
+      "DateTime": "2022-02-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 160.14
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "f97bb451-70b9-4756-988b-fa06d5f43928",
+        "Count": 3
+      },
+      "Guid": "403f17dd-6aeb-4d11-984f-74d58200a0a7"
+    },
+    {
+      "DateTime": "2022-03-21T00:00:00",
+      "RecordType": "Withdrawal",
+      "Source": {
+        "PlatformGuid": "0f905dc5-340e-43e3-9b03-67bf2d336d02",
+        "CurrencyGuid": "aa316918-b6f4-4ddf-a703-76f935c0e302",
+        "Count": 401
+      },
+      "Target": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f",
+        "Count": 12443
+      },
+      "Guid": "90f1deee-f68d-4ebe-8d34-8ded7aaf0681"
+    },
+    {
+      "DateTime": "2022-03-22T00:00:00",
+      "RecordType": "Transfer",
+      "Source": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "f97bb451-70b9-4756-988b-fa06d5f43928",
+        "Count": 3
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 158.76
+      },
+      "Guid": "a85c9600-c496-48c0-8731-8d831eb0c8d6"
+    },
+    {
+      "DateTime": "2022-03-22T00:00:00",
+      "RecordType": "Transfer",
+      "Source": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "10be68d2-87ca-4a11-b40f-617023030f0b",
+        "Count": 1
+      },
+      "Target": {
+        "PlatformGuid": "2e44855b-6fed-4b07-8044-5cfb511c2423",
+        "CurrencyGuid": "e90f60f9-288d-43db-a1bb-ba7da4557fc4",
+        "Count": 174.31
+      },
+      "Guid": "c07d207b-5846-4c77-af34-c24e227dfaa4"
+    },
+    {
+      "DateTime": "2022-03-22T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f",
+        "Count": 11782
+      },
+      "Target": {
+        "PlatformGuid": "82b92351-5eac-481a-9f99-6846a6daab9c",
+        "CurrencyGuid": "485f3d17-7502-4f0e-96e8-f8993c6fdd7a",
+        "Count": 13
+      },
+      "Guid": "8dd09c80-5752-4503-981e-9f6b827bb306"
+    },
+    {
+      "DateTime": "2022-05-04T00:00:00",
+      "RecordType": "Deposit",
+      "Source": {
+        "PlatformGuid": "92a929b2-be8b-4b1d-a9d7-9d76078313a3",
+        "CurrencyGuid": "e6090e9b-d69d-4085-b44f-ef305d1c9e4f",
+        "Count": 12385
+      },
+      "Target": {
+        "PlatformGuid": "6e38f559-745a-4c01-b271-a633d9fdc7fd",
+        "CurrencyGuid": "0e1ba27c-0db5-4903-a4e9-2feb2cfb9faa",
+        "Count": 13
+      },
+      "Guid": "2a50ab6f-10f8-4154-a635-0bae140e30a0"
+    }
+  ]
+}
